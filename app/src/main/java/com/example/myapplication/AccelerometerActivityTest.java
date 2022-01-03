@@ -11,8 +11,8 @@ public class AccelerometerActivityTest extends AppCompatActivity {
 
     private TextView xText, yText, zText;
     private Accelerometer accelerometer;
-    private int counter = 10, zCounter = 10;
-    private float imageX, imageY, defaultImageX, defaultImageY;
+    private int counter = 10, zCounter = 10, yCounter3 = 0;
+    private float imageX, imageY, defaultImageX, defaultImageY, defaultX, defaultY;
     private ImageView image;
     private float accSumX = 0, accSumY = 0, accSumZ = 0;
 
@@ -34,8 +34,9 @@ public class AccelerometerActivityTest extends AppCompatActivity {
         imageY = image.getScaleY();
         defaultImageX = imageX;
         defaultImageY = imageY;
+        defaultX = image.getX();
+        defaultY = image.getX();
 
-        yText.setText(imageX + "" + imageY);
 
         accelerometer.setListener(new Accelerometer.Listener() {
             @Override
@@ -49,38 +50,40 @@ public class AccelerometerActivityTest extends AppCompatActivity {
                     accSumZ += z;
                 }
 
-                accSumZ = accSumZ - (accSumZ * 0.2f);
 
 
                 //xText.setText("" + String.format("%.2f", accSumX));
                 //yText.setText("" + String.format("%.2f", accSumY));
-                yText.setText("" + String.format("%.2f", accSumZ));
+                yText.setText("" + String.format("%.2f", accSumX));
 
-/*
-                if (imageX != defaultImageX) {
+                accSumX = accSumX - (accSumX * 0.2f);
+                accSumY = accSumY - (accSumY * 0.2f);
 
-                    if (x >= 2 && counter == 0) {
-                        image.setX(image.getX() + 250);
-                        counter = 5;
-                    }
-                    if (x <= -2 && counter == 0) {
+                    if (x >= 2f && counter == 0) {
                         image.setX(image.getX() - 250);
-                        counter = 5;
+                        counter = 15;
+                        xText.setText("right");
+                    }else if (x <= -2f && counter == 0) {
+                        image.setX(image.getX() + 250);
+                        counter = 15;
+                        xText.setText("left");
                     }
-                }
 
-                if (imageX != defaultImageX) {
 
-                    if (y >= 2 && counter == 0) {
+                    if (accSumY >= 2f && counter == 0) {
                         image.setY(image.getY() + 250);
-                        counter = 5;
+                        counter = 15;
+                        xText.setText("dole");
                     }
-                    if (y <= -2 && counter == 0) {
+                    if (accSumY <= -2f && counter == 0) {
                         image.setY(image.getY() - 250);
-                        counter = 5;
+                        counter = 15;
+                        xText.setText("gore");
                     }
-                }
-                */
+
+
+                //zoom
+                accSumZ = accSumZ - (accSumZ * 0.2f);
                 if (accSumZ >= 3 && counter == 0) {
                      zoomIn();
                     xText.setText("zoom in");
@@ -94,11 +97,14 @@ public class AccelerometerActivityTest extends AppCompatActivity {
                     xText.setText("zoom out");
                     counter = 10;
                 }
+
+                zText.setText(counter + "");
+                //-zoom
+
+
                 if (counter > 0) {
                     counter--;
                 }
-                zText.setText(counter + "");
-
             }
 
             private void zoomOut() {
