@@ -10,15 +10,18 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.MyApplication">
         <activity
+            android:name=".AccelerometerInstructions"
+            android:exported="true" />
+        <activity
             android:name=".AccelerometerActivityTest"
-            android:exported="true"
             android:configChanges="orientation"
-            android:screenOrientation="portrait"/>
+            android:exported="true"
+            android:screenOrientation="portrait" />
         <activity
             android:name=".GyroscopeTest"
-            android:exported="true"
             android:configChanges="orientation"
-            android:screenOrientation="portrait"/>
+            android:exported="true"
+            android:screenOrientation="portrait" />
         <activity
             android:name=".MainMenu"
             android:exported="true" />
