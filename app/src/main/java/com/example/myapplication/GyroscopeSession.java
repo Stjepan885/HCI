@@ -3,6 +3,8 @@ package com.example.myapplication;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
+import android.util.Log;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -23,10 +25,15 @@ public class GyroscopeSession extends AppCompatActivity {
     private ImageView image;
 
 
+    private final int counterDefault = 6;
+    private final int rotationLine = 2;
+    private int counter = 5;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_gyroscope_session);
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
         gyroAlg = new GyroscopeAlg();
         gyroscope = new Gyroscope(this);
@@ -41,60 +48,98 @@ public class GyroscopeSession extends AppCompatActivity {
         defaultImageX = imageX;
         defaultImageY = imageY;
         defaultX = image.getX();
+        Log.e(" dsd", " " + defaultImageX);
         defaultY = image.getX();
+        float imageLeft = image.getLeft();
+        float imageTop = image.getTop();
+        Log.e(" dsd", " " + imageLeft);
 
         gyroscope.setListener(new Gyroscope.Listener() {
             @Override
             public void onRotation(float x, float y, float z) {
-                nb.setText("right " + y);
-                switch (mode){
+                switch (mode) {
                     case 0:
-                        ret = gyroAlg.movementSwipe(x,y,z);
-                        if (ret == -1){
-                            mode = 1;
-                            zoomIn();
-                            break;
-                        }else{
-                            currentImage = ret;
-                            image.setImageResource(images[currentImage]);
-                        }
-                        break;
-                    case 1:
-                        ret = gyroAlg.movement(x,y,z);
-                        switch (ret){
-                            case 1:
-                                image.setX(image.getX() + 250);
-                                break;
-                            case 2:
-                                image.setX(image.getX() - 250);
-                                break;
-                            case 3:
-                                image.setY(image.getY() - 250);
-                                break;
-                            case 4:
-                                image.setY(image.getY() + 250);
-                                break;
-                            case 5:
+                        if (counter == 0) {
+                            if (y >= rotationLine) {
+                                currentImage += 1;
+                                counter = counterDefault;
+                            } else if (y <= -rotationLine) {
+                                currentImage -= 1;
+                                counter = counterDefault;
+                            } else if (x >= rotationLine) {
+                                currentImage -= 5;
+                                counter = counterDefault;
+                            } else if (x <= -rotationLine) {
+                                currentImage += 5;
+                                counter = counterDefault;
+                            } else if (z <= -rotationLine) {
                                 zoomIn();
-                                break;
-                            case 6:
-                                if (image.getScaleY() != defaultY) {
-                                    image.setX(defaultImageX);
-                                    image.setY(defaultImageY);
-                                    mode = 0;
-                                }
-                                zoomOut();
-                                break;
-                            default:
-                                break;
+                                counter = counterDefault;
+                                mode = 1;
+                            } else {
+                                mode = 0;
+                            }
+
+                            if (currentImage < 0) {
+                                currentImage = 0;
+                            } else if (currentImage > 13) {
+                                currentImage = 13;
+                            }
                         }
 
+                        if (counter > 0) {
+                            counter--;
+                        }
+                        image.setImageResource(images[currentImage]);
+                        nb.setText("" + currentImage + " " + counter);
+                        break;
+                    case 1:
+                        if (counter == 0) {
+                            if (z <= -rotationLine) {
+                                counter = counterDefault;
+                                if (image.getScaleX() < 10f) {
+                                    zoomIn();
+                                }
+                            } else if (z >= rotationLine) {
+                                zoomOut();
+                                if (image.getScaleY() == defaultImageY) {
+                                    image.setX(defaultX);
+                                    image.setY(defaultY);
+                                    mode = 0;
+                                }
+                                counter = counterDefault;
+                            } else if (y >= rotationLine) {
+                                if ((image.getX() / image.getScaleX()) > -333) {
+                                    image.setX(image.getX() - 250);
+                                }
+                                counter = counterDefault;
+                            } else if (y <= -rotationLine) {
+                                if ((image.getX() / image.getScaleX()) < 333){
+                                    image.setX(image.getX() + 250);
+                                }
+                                counter = counterDefault;
+                            } else if (x >= rotationLine) {
+                                counter = counterDefault;
+                                image.setY(image.getY() - 250);
+                            } else if (x <= -rotationLine) {
+                                counter = counterDefault;
+                                image.setY(image.getY() + 250);
+                            }
+
+                            Log.e("dimenzije", image.getX() + " x " + image.getY() + " y " + image.getScaleX() + " x  scale" + image.getScaleY() + " y");
+                        }
+
+                        if (counter > 0) {
+                            counter--;
+                        }
+                        nb.setText("" + currentImage + " " + counter);
                         break;
                 }
             }
         });
 
     }
+
     private void zoomOut() {
         image.setScaleX(imageX - 1);
         image.setScaleY(imageY - 1);

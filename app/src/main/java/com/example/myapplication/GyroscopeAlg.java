@@ -9,7 +9,7 @@ public class GyroscopeAlg {
     private int currentImage = 0;
     private boolean set = false;
     private int counterTwo = 2;
-    private final int counterDefault = 4;
+    private final int counterDefault = 8;
     private final float rotationLine = 2f;
 
     private float imageX, imageY, defaultImageX, defaultImageY, defaultX, defaultY;
