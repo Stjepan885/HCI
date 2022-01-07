@@ -18,7 +18,17 @@
             android:exported="true"
             android:screenOrientation="portrait" />
         <activity
+            android:name=".GyroscopeSession"
+            android:configChanges="orientation"
+            android:exported="true"
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.AppCompat.NoActionBar"/>
+        <activity
             android:name=".GyroscopeTest"
+            android:configChanges="orientation"
+            android:exported="true"
+            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait"/>
             android:configChanges="orientation"
             android:exported="true"
             android:screenOrientation="portrait" />
