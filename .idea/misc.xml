@@ -6,6 +6,7 @@
         <entry key="app/src/main/res/layout/activity_accelerometer_session.xml" value="0.3265625" />
         <entry key="app/src/main/res/layout/activity_accelerometer_test.xml" value="0.3265625" />
         <entry key="app/src/main/res/layout/activity_gyroscope_session.xml" value="0.3541666666666667" />
+        <entry key="app/src/main/res/layout/activity_gyroscope_test.xml" value="0.17135416666666667" />
         <entry key="app/src/main/res/layout/activity_main.xml" value="0.1" />
       </map>
     </option>

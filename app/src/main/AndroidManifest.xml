@@ -11,10 +11,14 @@
         android:theme="@style/Theme.MyApplication">
         <activity
             android:name=".GyroscopeSession"
-            android:exported="true" />
+            android:configChanges="orientation"
+            android:exported="true"
+            android:screenOrientation="portrait" />
         <activity
             android:name=".GyroscopeTest"
-            android:exported="true" />
+            android:configChanges="orientation"
+            android:exported="true"
+            android:screenOrientation="portrait" />
         <activity
             android:name=".MainMenu"
             android:exported="true" />
