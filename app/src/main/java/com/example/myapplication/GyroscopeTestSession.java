@@ -1,5 +1,6 @@
 package com.example.myapplication;
 
+import androidx.annotation.ColorInt;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
@@ -10,7 +11,7 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
-public class GyroscopeSession extends AppCompatActivity {
+public class GyroscopeTestSession extends AppCompatActivity {
 
     private GyroscopeAlg gyroAlg;
     private Gyroscope gyroscope;
@@ -25,21 +26,17 @@ public class GyroscopeSession extends AppCompatActivity {
     private float imageX, imageY, defaultImageX, defaultImageY, defaultX, defaultY;
     private ImageView image;
 
+
     private final int counterDefault = 6;
     private final int rotationLine = 2;
     private int counter = 5;
-
-    //database variables
-    private int inputCounter = 0;
-    private long startTime;
-
 
     private ProgressBar prog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_gyroscope_session);
+        setContentView(R.layout.activity_gyroscope_test_session);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
         //gyroAlg = new GyroscopeAlg();
@@ -48,10 +45,9 @@ public class GyroscopeSession extends AppCompatActivity {
         Button button = (Button) findViewById(R.id.button);
         TextView nb = (TextView) findViewById(R.id.textView2);
 
+        image = findViewById(R.id.imageView);
         prog = findViewById(R.id.progressBar);
         prog.setMax(100);
-
-        image = findViewById(R.id.imageView);
 
         imageX = image.getScaleX();
         imageY = image.getScaleY();
@@ -73,24 +69,19 @@ public class GyroscopeSession extends AppCompatActivity {
                             if (y >= rotationLine) {
                                 currentImage += 1;
                                 counter = counterDefault;
-                                inputCounter++;
                             } else if (y <= -rotationLine) {
                                 currentImage -= 1;
                                 counter = counterDefault;
-                                inputCounter++;
                             } else if (x >= rotationLine) {
                                 currentImage -= 5;
                                 counter = counterDefault;
-                                inputCounter++;
                             } else if (x <= -rotationLine) {
                                 currentImage += 5;
                                 counter = counterDefault;
-                                inputCounter++;
                             } else if (z <= -rotationLine) {
                                 zoomIn();
                                 counter = counterDefault;
                                 mode = 1;
-                                inputCounter++;
                             } else {
                                 mode = 0;
                             }
@@ -106,7 +97,8 @@ public class GyroscopeSession extends AppCompatActivity {
                             counter--;
                         }
                         image.setImageResource(images[currentImage]);
-                        nb.setText("" + currentImage + " " + counter);
+
+                        nb.setText(currentImage + "/14");
                         break;
                     case 1:
                         if (counter == 0) {
@@ -114,11 +106,9 @@ public class GyroscopeSession extends AppCompatActivity {
                                 counter = counterDefault;
                                 if (image.getScaleX() < 10f) {
                                     zoomIn();
-                                    inputCounter++;
                                 }
                             } else if (z >= rotationLine) {
                                 zoomOut();
-                                inputCounter++;
                                 if (image.getScaleY() == defaultImageY) {
                                     image.setX(defaultX);
                                     image.setY(defaultY);
@@ -128,23 +118,19 @@ public class GyroscopeSession extends AppCompatActivity {
                             } else if (y >= rotationLine) {
                                 if ((image.getX() / image.getScaleX()) > -333) {
                                     image.setX(image.getX() - 250);
-                                    inputCounter++;
                                 }
                                 counter = counterDefault;
                             } else if (y <= -rotationLine) {
                                 if ((image.getX() / image.getScaleX()) < 333){
                                     image.setX(image.getX() + 250);
-                                    inputCounter++;
                                 }
                                 counter = counterDefault;
                             } else if (x >= rotationLine) {
                                 counter = counterDefault;
                                 image.setY(image.getY() - 250);
-                                inputCounter++;
                             } else if (x <= -rotationLine) {
                                 counter = counterDefault;
                                 image.setY(image.getY() + 250);
-                                inputCounter++;
                             }
 
                             Log.e("dimenzije", image.getX() + " x " + image.getY() + " y " + image.getScaleX() + " x  scale" + image.getScaleY() + " y");
@@ -153,7 +139,7 @@ public class GyroscopeSession extends AppCompatActivity {
                         if (counter > 0) {
                             counter--;
                         }
-                        nb.setText("" + currentImage + " " + counter);
+
                         break;
                 }
                 if (counter == counterDefault){
@@ -192,6 +178,4 @@ public class GyroscopeSession extends AppCompatActivity {
         super.onPause();
         gyroscope.unregister();
     }
-
-
 }
