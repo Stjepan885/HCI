@@ -4,16 +4,20 @@ import androidx.annotation.ColorInt;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
+import android.util.AttributeSet;
 import android.util.Log;
+import android.view.MotionEvent;
+import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import java.util.concurrent.ThreadLocalRandom;
+
 public class GyroscopeTestSession extends AppCompatActivity {
 
-    private GyroscopeAlg gyroAlg;
     private Gyroscope gyroscope;
     private int[] images = {R.drawable.a1, R.drawable.a2, R.drawable.a3, R.drawable.a4,
             R.drawable.a5, R.drawable.a6, R.drawable.a7, R.drawable.a8,
@@ -24,14 +28,19 @@ public class GyroscopeTestSession extends AppCompatActivity {
     private int ret = 0;
 
     private float imageX, imageY, defaultImageX, defaultImageY, defaultX, defaultY;
-    private ImageView image;
-
 
     private final int counterDefault = 6;
     private final int rotationLine = 2;
     private int counter = 5;
 
     private ProgressBar prog;
+
+    private boolean drawSquareFlag = true;
+
+    private DrawImageView image;
+
+    private int nbOfTestsSwipe = 10, nbOfTestsZoom = 100;
+    private int randomTest = 0, randomSwipeNumber;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,10 +51,10 @@ public class GyroscopeTestSession extends AppCompatActivity {
         //gyroAlg = new GyroscopeAlg();
         gyroscope = new Gyroscope(this);
 
+
         Button button = (Button) findViewById(R.id.button);
         TextView nb = (TextView) findViewById(R.id.textView2);
 
-        image = findViewById(R.id.imageView);
         prog = findViewById(R.id.progressBar);
         prog.setMax(100);
 
@@ -54,15 +63,21 @@ public class GyroscopeTestSession extends AppCompatActivity {
         defaultImageX = imageX;
         defaultImageY = imageY;
         defaultX = image.getX();
-        Log.e(" dsd", " " + defaultImageX);
-        defaultY = image.getX();
-        float imageLeft = image.getLeft();
-        float imageTop = image.getTop();
-        Log.e(" dsd", " " + imageLeft);
+        defaultY = image.getY();
+
+        image = findViewById(R.id.imageView);
+
+        randomTest = ThreadLocalRandom.current().nextInt(0, 1);
+
+
 
         gyroscope.setListener(new Gyroscope.Listener() {
             @Override
             public void onRotation(float x, float y, float z) {
+                if (randomTest == 0){
+                    randomSwipeNumber = ThreadLocalRandom.current().nextInt(0, 13);
+                }
+
                 switch (mode) {
                     case 0:
                         if (counter == 0) {
@@ -121,7 +136,7 @@ public class GyroscopeTestSession extends AppCompatActivity {
                                 }
                                 counter = counterDefault;
                             } else if (y <= -rotationLine) {
-                                if ((image.getX() / image.getScaleX()) < 333){
+                                if ((image.getX() / image.getScaleX()) < 333) {
                                     image.setX(image.getX() + 250);
                                 }
                                 counter = counterDefault;
@@ -142,15 +157,31 @@ public class GyroscopeTestSession extends AppCompatActivity {
 
                         break;
                 }
-                if (counter == counterDefault){
+
+                if (counter == counterDefault) {
                     prog.setProgress(100);
-                }else{
-                    prog.setProgress(100 - (16*(counter)));
+                } else {
+                    prog.setProgress(100 - (16 * (counter)));
                 }
             }
+
         });
+    }
+
+    private void randomSquare() {
+        int randomX = ThreadLocalRandom.current().nextInt(0, 4);
+        int randomY = ThreadLocalRandom.current().nextInt(0, 7);
+
+        image.left = image.getX() + 250 * randomX;
+        image.top = image.getY() + 250 * randomY;
+        image.right = image.getX() + 250 * randomX + 250;
+        image.bottom = image.getY() + 250 * randomY + 250;
+
+        image.invalidate();
+        image.drawRect = true;
 
     }
+
 
     private void zoomOut() {
         image.setScaleX(imageX - 1);
@@ -178,4 +209,6 @@ public class GyroscopeTestSession extends AppCompatActivity {
         super.onPause();
         gyroscope.unregister();
     }
+
+
 }
