@@ -1,58 +1,43 @@
 package com.example.myapplication;
 
-import androidx.annotation.ColorInt;
 import androidx.appcompat.app.AppCompatActivity;
 
-import android.graphics.Color;
 import android.os.Bundle;
-import android.util.AttributeSet;
 import android.util.Log;
-import android.view.MotionEvent;
-import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
-import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import java.util.concurrent.ThreadLocalRandom;
 
 public class GyroscopeTestSession extends AppCompatActivity {
-
     private Gyroscope gyroscope;
+
+    private ProgressBar prog;
+    private DrawImageView image;
+    private TextView nbImage;
+
     private int[] images = {R.drawable.a1, R.drawable.a2, R.drawable.a3, R.drawable.a4,
             R.drawable.a5, R.drawable.a6, R.drawable.a7, R.drawable.a8,
             R.drawable.a9, R.drawable.a10, R.drawable.a11, R.drawable.a12,
             R.drawable.a13, R.drawable.a14};
+    private int[] imageZoomArrayX = {1750, 750, -500, -1750};
+    private int[] imageZoomArrayY = {3750, 2500, 1250, 0, -1250, -2500, -3750};
+
     private int currentImage = 0;
     private int mode = 0; // 0 - swipe 1 - zoom
     private int ret = 0;
 
-    private float imageX, imageY, defaultImageX, defaultImageY, defaultX, defaultY;
-
     private final int counterDefault = 6;
     private final int rotationLine = 2;
     private int counter = 5;
-
-    private ProgressBar prog;
-
-    private boolean drawSquareFlag = true;
-
-    private DrawImageView image;
-
-    private int nbOfTestsSwipe = 10, nbOfTestsZoom = 100;
+    private int testCounter = 5;
     private int randomTest = 0, randomSwipeNumber;
 
-    private TextView nbImage;
-
+    private float imageX, imageY, defaultImageX, defaultImageY, defaultX, defaultY;
     private float imageLeft, imageRight, imageTop, imageBottom;
-
     private int randomX, randomY;
-
-    private int[] imageZoomArrayX = {1750, 750, -500, -1750};
-    private int[] imageZoomArrayY = {3750, 2500, 1250, 0, -1250, -2500, -3750};
-
-    private int testCounter = 5;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,10 +45,7 @@ public class GyroscopeTestSession extends AppCompatActivity {
         setContentView(R.layout.activity_gyroscope_test_session);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
-
-        //gyroAlg = new GyroscopeAlg();
         gyroscope = new Gyroscope(this);
-
 
         Button button = (Button) findViewById(R.id.button);
         TextView nb = (TextView) findViewById(R.id.textView2);
@@ -71,8 +53,8 @@ public class GyroscopeTestSession extends AppCompatActivity {
 
         prog = findViewById(R.id.progressBar);
         prog.setMax(100);
-
         image = findViewById(R.id.imageView);
+
 
         imageX = image.getScaleX();
         imageY = image.getScaleY();
@@ -80,9 +62,6 @@ public class GyroscopeTestSession extends AppCompatActivity {
         defaultImageY = imageY;
         defaultX = image.getX();
         defaultY = image.getY();
-
-        randomTest = 0;
-
 
         gyroscope.setListener(new Gyroscope.Listener() {
             @Override
@@ -187,16 +166,13 @@ public class GyroscopeTestSession extends AppCompatActivity {
 
                             Log.e("dimenzije", image.getX() + " x " + image.getY() + " y " + image.getScaleX() + " x  scale" + image.getScaleY() + " y");
                             Log.e("dimenzije", imageLeft + " left " + imageRight + " right " + imageTop + " Top " + imageBottom + " Bottom");
-                            //Log.e(" " + image.getHeight() , " ");
-                            //Log.e(" " + image.getWidth() , " ");
+
                         }
 
                         if (counter > 0) {
                             counter--;
                         }
-
                         break;
-
                     case 2:
                         if (counter == 0) {
                             if (z <= -rotationLine) {
@@ -209,7 +185,6 @@ public class GyroscopeTestSession extends AppCompatActivity {
                         if (counter > 0) {
                             counter--;
                         }
-
                         break;
                 }
 
@@ -218,12 +193,7 @@ public class GyroscopeTestSession extends AppCompatActivity {
                 } else {
                     prog.setProgress(100 - (16 * (counter)));
                 }
-
-                //check image dimensions
-
-
             }
-
         });
     }
 
@@ -249,7 +219,6 @@ public class GyroscopeTestSession extends AppCompatActivity {
     }
 
     private void randomSquareZero() {
-
         image.left = 0;
         image.top = 0;
         image.right = 0;
@@ -265,7 +234,6 @@ public class GyroscopeTestSession extends AppCompatActivity {
         image.setScaleY(imageY - 1);
         imageX = image.getScaleX();
         imageY = image.getScaleY();
-
         checkImageBorder();
     }
 
@@ -278,6 +246,12 @@ public class GyroscopeTestSession extends AppCompatActivity {
             if (image.getX() > 750) {
                 image.setX(750);
             }
+            if (image.getX() < -750){
+                image.setX(-750);
+            }
+            if (image.getY() < -1000) {
+                image.setY(-1000);
+            }
         }
         if (scale == 3) {
             if (image.getY() > 2000) {
@@ -286,10 +260,25 @@ public class GyroscopeTestSession extends AppCompatActivity {
             if (image.getX() > 1250) {
                 image.setX(1250);
             }
+            if (image.getX() < -1250){
+                image.setX(-1250);
+            }
+            if (image.getY() < -2000) {
+                image.setY(-2000);
+            }
         }
         if (scale == 4) {
             if (image.getY() > 2250) {
                 image.setY(2250);
+            }
+            if (image.getX() < -1750){
+                image.setX(-1750);
+            }
+            if (image.getX() > 1750){
+                image.setX(1750);
+            }
+            if (image.getY() < -3000) {
+                image.setY(-3000);
             }
         }
     }
