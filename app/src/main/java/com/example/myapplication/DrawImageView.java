@@ -26,7 +26,8 @@ public class DrawImageView extends androidx.appcompat.widget.AppCompatImageView 
         currentPaint.setStyle(Paint.Style.STROKE);
         currentPaint.setStrokeJoin(Paint.Join.ROUND);
         currentPaint.setStrokeCap(Paint.Cap.ROUND);
-        currentPaint.setStrokeWidth(2);
+        currentPaint.setStrokeWidth(50);
+        currentPaint.setAlpha(70);
     }
 
     @Override

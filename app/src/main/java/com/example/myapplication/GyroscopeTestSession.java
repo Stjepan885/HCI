@@ -45,11 +45,21 @@ public class GyroscopeTestSession extends AppCompatActivity {
 
     private TextView nbImage;
 
+    private float imageLeft, imageRight, imageTop, imageBottom;
+
+    private int randomX, randomY;
+
+    private int[] imageZoomArrayX = {1750, 750, -500, -1750};
+    private int[] imageZoomArrayY = {3750, 2500, 1250, 0, -1250, -2500, -3750};
+
+    private int testCounter = 5;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_gyroscope_test_session);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+
 
         //gyroAlg = new GyroscopeAlg();
         gyroscope = new Gyroscope(this);
@@ -78,23 +88,32 @@ public class GyroscopeTestSession extends AppCompatActivity {
             @Override
             public void onRotation(float x, float y, float z) {
 
-
-                if (randomTest == 0) {
-                    randomSwipeNumber = ThreadLocalRandom.current().nextInt(0, 13);
-                    nbImage.setText(" " + (randomSwipeNumber + 1));
-                    randomTest = 3;
-                } else if (randomTest == 3) {
-                    if (currentImage == randomSwipeNumber) {
-                        randomSquare();
-                        randomTest = 4;
+                if (testCounter != 0) {
+                    if (randomTest == 0) {
+                        randomSwipeNumber = ThreadLocalRandom.current().nextInt(0, 13);
+                        nbImage.setText(" " + (randomSwipeNumber + 1));
+                        randomTest = 3;
+                    } else if (randomTest == 3) {
+                        if (currentImage == randomSwipeNumber) {
+                            randomSquare();
+                            randomTest = 4;
+                            mode = 2;
+                        }
+                    } else if (randomTest == 4) {
+                        if (image.getScaleX() == 5 && image.getX() == imageZoomArrayX[randomX] && image.getY() == imageZoomArrayY[randomY]) {
+                            image.setX(defaultX);
+                            image.setY(defaultY);
+                            image.setScaleX(1);
+                            image.setScaleY(1);
+                            randomSquareZero();
+                            randomTest = 0;
+                            mode = 0;
+                            testCounter--;
+                        }
                     }
-                } else if(randomTest == 4){
-
-
+                } else {
+                    //end of test
                 }
-
-
-
 
                 switch (mode) {
                     case 0:
@@ -131,7 +150,7 @@ public class GyroscopeTestSession extends AppCompatActivity {
                         }
                         image.setImageResource(images[currentImage]);
 
-                        nb.setText((currentImage+1) + "/14");
+                        nb.setText((currentImage + 1) + "/14");
                         break;
                     case 1:
                         if (counter == 0) {
@@ -149,14 +168,14 @@ public class GyroscopeTestSession extends AppCompatActivity {
                                 }
                                 counter = counterDefault;
                             } else if (y >= rotationLine) {
-                                if ((image.getX() / image.getScaleX()) > -333) {
-                                    image.setX(image.getX() - 250);
-                                }
+
+                                image.setX(image.getX() - 250);
+
                                 counter = counterDefault;
                             } else if (y <= -rotationLine) {
-                                if ((image.getX() / image.getScaleX()) < 333) {
-                                    image.setX(image.getX() + 250);
-                                }
+
+                                image.setX(image.getX() + 250);
+
                                 counter = counterDefault;
                             } else if (x >= rotationLine) {
                                 counter = counterDefault;
@@ -167,6 +186,24 @@ public class GyroscopeTestSession extends AppCompatActivity {
                             }
 
                             Log.e("dimenzije", image.getX() + " x " + image.getY() + " y " + image.getScaleX() + " x  scale" + image.getScaleY() + " y");
+                            Log.e("dimenzije", imageLeft + " left " + imageRight + " right " + imageTop + " Top " + imageBottom + " Bottom");
+                            //Log.e(" " + image.getHeight() , " ");
+                            //Log.e(" " + image.getWidth() , " ");
+                        }
+
+                        if (counter > 0) {
+                            counter--;
+                        }
+
+                        break;
+
+                    case 2:
+                        if (counter == 0) {
+                            if (z <= -rotationLine) {
+                                zoomIn();
+                                counter = counterDefault;
+                                mode = 1;
+                            }
                         }
 
                         if (counter > 0) {
@@ -182,6 +219,8 @@ public class GyroscopeTestSession extends AppCompatActivity {
                     prog.setProgress(100 - (16 * (counter)));
                 }
 
+                //check image dimensions
+
 
             }
 
@@ -189,17 +228,35 @@ public class GyroscopeTestSession extends AppCompatActivity {
     }
 
     private void randomSquare() {
-        int randomX = ThreadLocalRandom.current().nextInt(0, 4);
-        int randomY = ThreadLocalRandom.current().nextInt(0, 7);
+        randomX = ThreadLocalRandom.current().nextInt(1, 4);
+        randomY = ThreadLocalRandom.current().nextInt(1, 7);
 
-        image.left = image.getX() + 250 * randomX;
-        image.top = image.getY() + 250 * randomY;
-        image.right = image.getX() + 250 * randomX + 250;
-        image.bottom = image.getY() + 250 * randomY + 250;
+        imageLeft = image.getX() + 20 + 250 * randomX;
+        imageTop = image.getX() + 20 + 250 * randomX + 250;
+        imageRight = image.getY() + 250 * randomY;
+        imageBottom = image.getY() + 250 * randomY + 350;
+
+        Log.e(" " + image.getHeight(), " ");
+        Log.e(" " + image.getWidth(), " ");
+
+        image.left = imageLeft;
+        image.top = imageRight;
+        image.right = imageTop;
+        image.bottom = imageBottom;
 
         image.invalidate();
         image.drawRect = true;
+    }
 
+    private void randomSquareZero() {
+
+        image.left = 0;
+        image.top = 0;
+        image.right = 0;
+        image.bottom = 0;
+
+        image.invalidate();
+        image.drawRect = true;
     }
 
 
@@ -208,9 +265,39 @@ public class GyroscopeTestSession extends AppCompatActivity {
         image.setScaleY(imageY - 1);
         imageX = image.getScaleX();
         imageY = image.getScaleY();
+
+        checkImageBorder();
+    }
+
+    private void checkImageBorder() {
+        float scale = image.getScaleX();
+        if (scale == 2) {
+            if (image.getY() > 1000) {
+                image.setY(1000);
+            }
+            if (image.getX() > 750) {
+                image.setX(750);
+            }
+        }
+        if (scale == 3) {
+            if (image.getY() > 2000) {
+                image.setY(2000);
+            }
+            if (image.getX() > 1250) {
+                image.setX(1250);
+            }
+        }
+        if (scale == 4) {
+            if (image.getY() > 2250) {
+                image.setY(2250);
+            }
+        }
     }
 
     private void zoomIn() {
+        if (image.getScaleX() == 5) {
+            return;
+        }
         image.setScaleX(imageX + 1);
         image.setScaleY(imageY + 1);
         imageX = image.getScaleX();
