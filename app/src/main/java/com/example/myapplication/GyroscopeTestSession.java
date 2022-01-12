@@ -3,6 +3,7 @@ package com.example.myapplication;
 import androidx.annotation.ColorInt;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.graphics.Color;
 import android.os.Bundle;
 import android.util.AttributeSet;
 import android.util.Log;
@@ -42,6 +43,8 @@ public class GyroscopeTestSession extends AppCompatActivity {
     private int nbOfTestsSwipe = 10, nbOfTestsZoom = 100;
     private int randomTest = 0, randomSwipeNumber;
 
+    private TextView nbImage;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -54,9 +57,12 @@ public class GyroscopeTestSession extends AppCompatActivity {
 
         Button button = (Button) findViewById(R.id.button);
         TextView nb = (TextView) findViewById(R.id.textView2);
+        nbImage = (TextView) findViewById(R.id.textView3);
 
         prog = findViewById(R.id.progressBar);
         prog.setMax(100);
+
+        image = findViewById(R.id.imageView);
 
         imageX = image.getScaleX();
         imageY = image.getScaleY();
@@ -65,18 +71,30 @@ public class GyroscopeTestSession extends AppCompatActivity {
         defaultX = image.getX();
         defaultY = image.getY();
 
-        image = findViewById(R.id.imageView);
-
-        randomTest = ThreadLocalRandom.current().nextInt(0, 1);
-
+        randomTest = 0;
 
 
         gyroscope.setListener(new Gyroscope.Listener() {
             @Override
             public void onRotation(float x, float y, float z) {
-                if (randomTest == 0){
+
+
+                if (randomTest == 0) {
                     randomSwipeNumber = ThreadLocalRandom.current().nextInt(0, 13);
+                    nbImage.setText(" " + (randomSwipeNumber + 1));
+                    randomTest = 3;
+                } else if (randomTest == 3) {
+                    if (currentImage == randomSwipeNumber) {
+                        randomSquare();
+                        randomTest = 4;
+                    }
+                } else if(randomTest == 4){
+
+
                 }
+
+
+
 
                 switch (mode) {
                     case 0:
@@ -113,7 +131,7 @@ public class GyroscopeTestSession extends AppCompatActivity {
                         }
                         image.setImageResource(images[currentImage]);
 
-                        nb.setText(currentImage + "/14");
+                        nb.setText((currentImage+1) + "/14");
                         break;
                     case 1:
                         if (counter == 0) {
@@ -163,6 +181,8 @@ public class GyroscopeTestSession extends AppCompatActivity {
                 } else {
                     prog.setProgress(100 - (16 * (counter)));
                 }
+
+
             }
 
         });
