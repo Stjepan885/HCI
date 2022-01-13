@@ -26,7 +26,24 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Ovo su upute."/>
+                android:text="Cilj ovog testa je da se pomoću rotacije mobitela po
+                                jegovim osima prelistavaju slike galerije te približava i udaljava
+                                određena slika. Mobitel je potrebno držati jednom rukom u običajenom položaju korištenja mobitela.
+                                "/>
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Pokretanjem testa pomoću gumba dolje, pokreče se aktivnost u kojoj je moguće isprobati način na koji aplikacija funkcioira.
+
+                                Prilikom pokretanja prikazuje se prva slika galerije. Na vrhu zaslona nalazi se traka napretka, a na dnu se nalazi broj koji označava koja se trenutno slika galerije prikazuje i ukupni broj slika. Kako bi se registrirala rotacija mobitela potrebno je pričekati da se traka napretka u potpunosti ispuni. Nakon sto se rotacija obavi potrebno je mobitel vrati u početni položaj prije nego li se traka napretka ponovno popuni.
+
+                                Za prelistavanje jedne slike koristi se rotacija po y-osi mobitela, dok se za prelistavanje pet slika koristi os x.
+
+                                "/>
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text=""/>
             <Button
                 android:layout_width="200dp"
                 android:layout_height="wrap_content"

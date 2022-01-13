@@ -23,7 +23,7 @@ public class InstructionsGyroscope extends AppCompatActivity {
         startTest.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(InstructionsGyroscope.this, GyroscopeTestSession.class);
+                Intent intent = new Intent(InstructionsGyroscope.this, GyroscopeSession.class);
                 startActivity(intent);
             }
         });

@@ -50,7 +50,7 @@ public class MainMenu extends AppCompatActivity {
         start1_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(MainMenu.this, GyroscopeSession.class);
+                Intent intent = new Intent(MainMenu.this, GyroscopeTestSession.class);
                 startActivity(intent);
             }
         });
