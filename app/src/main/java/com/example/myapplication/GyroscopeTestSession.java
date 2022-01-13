@@ -18,12 +18,12 @@ public class GyroscopeTestSession extends AppCompatActivity {
     private DrawImageView image;
     private TextView nbImage;
 
-    private int[] images = {R.drawable.a1, R.drawable.a2, R.drawable.a3, R.drawable.a4,
+    private final int[] images = {R.drawable.a1, R.drawable.a2, R.drawable.a3, R.drawable.a4,
             R.drawable.a5, R.drawable.a6, R.drawable.a7, R.drawable.a8,
             R.drawable.a9, R.drawable.a10, R.drawable.a11, R.drawable.a12,
             R.drawable.a13, R.drawable.a14};
-    private int[] imageZoomArrayX = {1750, 750, -500, -1750};
-    private int[] imageZoomArrayY = {3750, 2500, 1250, 0, -1250, -2500, -3750};
+    private final int[] imageZoomArrayX = {1750, 750, -500, -1750};
+    private final int[] imageZoomArrayY = {3750, 2500, 1250, 0, -1250, -2500, -3750};
 
     private int currentImage = 0;
     private int mode = 0; // 0 - swipe 1 - zoom
@@ -243,7 +243,7 @@ public class GyroscopeTestSession extends AppCompatActivity {
             if (image.getX() > 750) {
                 image.setX(750);
             }
-            if (image.getX() < -750){
+            if (image.getX() < -750) {
                 image.setX(-750);
             }
             if (image.getY() < -1000) {
@@ -257,7 +257,7 @@ public class GyroscopeTestSession extends AppCompatActivity {
             if (image.getX() > 1250) {
                 image.setX(1250);
             }
-            if (image.getX() < -1250){
+            if (image.getX() < -1250) {
                 image.setX(-1250);
             }
             if (image.getY() < -2000) {
@@ -268,10 +268,10 @@ public class GyroscopeTestSession extends AppCompatActivity {
             if (image.getY() > 2250) {
                 image.setY(2250);
             }
-            if (image.getX() < -1750){
+            if (image.getX() < -1750) {
                 image.setX(-1750);
             }
-            if (image.getX() > 1750){
+            if (image.getX() > 1750) {
                 image.setX(1750);
             }
             if (image.getY() < -3000) {

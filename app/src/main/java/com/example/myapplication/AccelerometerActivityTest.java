@@ -116,7 +116,6 @@ public class AccelerometerActivityTest extends AppCompatActivity {
                 accSumY = accSumY - (accSumY * 0.2f);
                 accSumZ = accSumZ - (accSumZ * 0.2f);
 
-
                 switch (mode) {
                     case 0:
                         if (accSumZ >= 2 && counterTwo == 0) {
@@ -196,11 +195,9 @@ public class AccelerometerActivityTest extends AppCompatActivity {
                             set = false;
                             counterTwo = counterTwoDefault;
                         }
-
                         if (counter > 0) {
                             counter--;
                         }
-
                         break;
                     case 2:
                         if (accSumZ >= 2 && counterTwo == 0) {
@@ -210,82 +207,19 @@ public class AccelerometerActivityTest extends AppCompatActivity {
                             counterTwo = counterTwoDefault;
                             zoomIn();
                         }
-
                         break;
-
                 }
-
                 if (counter == counterDefault) {
                     prog.setProgress(100);
                 } else {
                     prog.setProgress(100 - (5 * (counter)));
                 }
 
-/*
-                if (accSumX >= 1.5f && counterTwo == 0) {
-                    image.setX(image.getX() + 250);
-                    counter = 10;
-
-                    set = false;
-                    counterTwo = 3;
-                } else if (accSumX <= -1.5f && counterTwo == 0) {
-                    image.setX(image.getX() - 250);
-                    counter = 10;
-                    zText.setText("left");
-                    set = false;
-                    counterTwo = 3;
-                }
-                if (counter > 0) {
-                    counter--;
-                }
-
-                if (accSumY >= 1.5f && counterTwo == 0) {
-                    image.setY(image.getY() - 250);
-                    counter = 10;
-
-                    set = false;
-                    counterTwo = 3;
-                }
-                if (accSumY <= -1.5f && counterTwo == 0) {
-                    image.setY(image.getY() + 250);
-                    counter = 10;
-
-                    set = false;
-                    counterTwo = 3;
-                }
-
-
-                //zoom
-                if (accSumZ >= 2 && counterTwo == 0) {
-                    zoomIn();
-                    xText.setText("zoom in");
-                    counter = 10;
-                    set = false;
-                    counterTwo = 3;
-                }
-                if (accSumZ <= -2 && counterTwo == 0 && imageX == defaultImageX) {
-                    counter = 10;
-                    set = false;
-                    counterTwo = 3;
-                }
-                if (accSumZ <= -2 && counterTwo == 0 && imageX != defaultImageX) {
-                    zoomOut();
-                    xText.setText("zoom out");
-                    counter = 10;
-                    set = false;
-                    counterTwo = 3;
-                }
-                zText.setText(counter + "");
-                //-zoom
-
-*/
                 if (counter > 0) {
                     counter--;
                 }
                 nb.setText((currentImage + 1) + "/14");
             }
-
-
         });
 
     }
