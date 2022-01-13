@@ -2,6 +2,7 @@ package com.example.myapplication;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.WindowManager;
@@ -90,6 +91,8 @@ public class GyroscopeTestSession extends AppCompatActivity {
                     }
                 } else {
                     //end of test
+                    Intent intent = new Intent(GyroscopeTestSession.this, MainMenu.class);
+                    startActivity(intent);
                 }
 
                 switch (mode) {

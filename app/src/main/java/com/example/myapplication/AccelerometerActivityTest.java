@@ -1,5 +1,6 @@
 package com.example.myapplication;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.WindowManager;
@@ -92,6 +93,9 @@ public class AccelerometerActivityTest extends AppCompatActivity {
                     }
                 } else {
                     //end of test
+
+                    Intent intent = new Intent(AccelerometerActivityTest.this, MainMenu.class);
+                    startActivity(intent);
                 }
 
                 if (counterTwo > 0 && set == true) {

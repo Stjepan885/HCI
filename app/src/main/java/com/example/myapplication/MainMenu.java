@@ -42,8 +42,8 @@ public class MainMenu extends AppCompatActivity {
         start1_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //ntent intent = new Intent(MainMenu.this, .class);
-                //startActivity(intent);
+                Intent intent = new Intent(MainMenu.this, AccelerometerActivityTest.class);
+                startActivity(intent);
             }
         });
 
