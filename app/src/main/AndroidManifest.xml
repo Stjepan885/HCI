@@ -29,7 +29,8 @@
             android:name=".AccelerometerActivityTest"
             android:configChanges="orientation"
             android:exported="true"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.AppCompat.NoActionBar"/>
         <activity
             android:name=".GyroscopeSession"
             android:configChanges="orientation"

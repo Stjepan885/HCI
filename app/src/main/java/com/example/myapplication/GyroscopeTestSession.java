@@ -27,7 +27,6 @@ public class GyroscopeTestSession extends AppCompatActivity {
 
     private int currentImage = 0;
     private int mode = 0; // 0 - swipe 1 - zoom
-    private int ret = 0;
 
     private final int counterDefault = 6;
     private final int rotationLine = 2;
@@ -54,7 +53,6 @@ public class GyroscopeTestSession extends AppCompatActivity {
         prog = findViewById(R.id.progressBar);
         prog.setMax(100);
         image = findViewById(R.id.imageView);
-
 
         imageX = image.getScaleX();
         imageY = image.getScaleY();
@@ -116,7 +114,6 @@ public class GyroscopeTestSession extends AppCompatActivity {
                             } else {
                                 mode = 0;
                             }
-
                             if (currentImage < 0) {
                                 currentImage = 0;
                             } else if (currentImage > 13) {
@@ -135,7 +132,7 @@ public class GyroscopeTestSession extends AppCompatActivity {
                         if (counter == 0) {
                             if (z <= -rotationLine) {
                                 counter = counterDefault;
-                                if (image.getScaleX() < 10f) {
+                                if (image.getScaleX() < 5f) {
                                     zoomIn();
                                 }
                             } else if (z >= rotationLine) {
