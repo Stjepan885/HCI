@@ -147,5 +147,9 @@ public class AccelerationAlg {
     public void setImageY(float imageY) {
         this.imageY = imageY;
     }
+
+    public int getCounter() {
+        return counter;
+    }
 }
 
