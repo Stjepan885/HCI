@@ -45,10 +45,7 @@ public class MainActivity extends AppCompatActivity {
             logInButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    //FirebaseDatabase.getInstance().getReference().child("Bok").child("book").setValue("bokkk");
-
                     addUsers();
-
                 }
             });
 

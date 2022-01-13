@@ -10,10 +10,34 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.MyApplication">
         <activity
+            android:name=".GyroscopeTestSession"
+            android:configChanges="orientation"
+            android:exported="true"
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.AppCompat.NoActionBar"/>
+
+        <activity
+            android:name=".InstructionsGyroscope"
+            android:exported="true" />
+        <activity
+            android:name=".AccelerometerInstructions"
+            android:exported="true" />
+        <activity
             android:name=".AccelerometerSession"
             android:exported="true" />
         <activity
             android:name=".AccelerometerActivityTest"
+            android:configChanges="orientation"
+            android:exported="true"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".GyroscopeSession"
+            android:configChanges="orientation"
+            android:exported="true"
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.AppCompat.NoActionBar" />
+        <activity
+            android:name=".GyroscopeTest"
             android:configChanges="orientation"
             android:exported="true"
             android:screenOrientation="portrait" />
