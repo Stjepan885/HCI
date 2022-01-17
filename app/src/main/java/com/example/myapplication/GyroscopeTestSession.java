@@ -2,7 +2,9 @@ package com.example.myapplication;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.WindowManager;
@@ -10,14 +12,22 @@ import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import com.google.firebase.database.DatabaseReference;
+
 import java.util.concurrent.ThreadLocalRandom;
 
 public class GyroscopeTestSession extends AppCompatActivity {
+    DatabaseReference databaseReference;
+    private SharedPreferences prefs;
+
+    private long startTime1, startTime2, endTime1, endTime2;
+    private long swipeTime = 0l, zoomTime = 0l;
+
     private Gyroscope gyroscope;
 
     private ProgressBar prog;
     private DrawImageView image;
-    private TextView nbImage;
+    private TextView nbImage, testsDone;;
 
     private final int[] images = {R.drawable.a1, R.drawable.a2, R.drawable.a3, R.drawable.a4,
             R.drawable.a5, R.drawable.a6, R.drawable.a7, R.drawable.a8,
@@ -50,6 +60,7 @@ public class GyroscopeTestSession extends AppCompatActivity {
         Button button = (Button) findViewById(R.id.button);
         TextView nb = (TextView) findViewById(R.id.textView2);
         nbImage = (TextView) findViewById(R.id.textView3);
+        testsDone = findViewById(R.id.textViewTestDone);
 
         prog = findViewById(R.id.progressBar);
         prog.setMax(100);
@@ -71,11 +82,15 @@ public class GyroscopeTestSession extends AppCompatActivity {
                         randomSwipeNumber = ThreadLocalRandom.current().nextInt(0, 13);
                         nbImage.setText(" " + (randomSwipeNumber + 1));
                         randomTest = 3;
+                        startTime1 = System.currentTimeMillis();
                     } else if (randomTest == 3) {
                         if (currentImage == randomSwipeNumber) {
                             randomSquare();
                             randomTest = 4;
                             mode = 2;
+                            endTime1 = System.currentTimeMillis();
+                            swipeTime += endTime1 - startTime1;
+                            startTime2 = endTime1;
                         }
                     } else if (randomTest == 4) {
                         if (image.getScaleX() == 5 && image.getX() == imageZoomArrayX[randomX] && image.getY() == imageZoomArrayY[randomY]) {
@@ -87,11 +102,30 @@ public class GyroscopeTestSession extends AppCompatActivity {
                             randomTest = 0;
                             mode = 0;
                             testCounter--;
+                            testsDone.setText((5 - testCounter) + "/5");
+                            endTime2 = System.currentTimeMillis();
+                            zoomTime += endTime2-startTime2;
                         }
                     }
                 } else {
+                    prefs = getSharedPreferences("shared_pref_name", Context.MODE_PRIVATE);
+
+                    SharedPreferences.Editor editor = prefs.edit();
+                    editor.putLong("swipeG", swipeTime);
+                    editor.putLong("zoomG", zoomTime);
+                    editor.apply();
+
+                    String id = prefs.getString("id",null);
+
+                    int swipe = (int)swipeTime;
+                    int zoom = (int)zoomTime;
+
+                    databaseReference.child(id).child("swipeTimeG").setValue(swipe);
+                    databaseReference.child(id).child("zoomTimeG").setValue(zoom);
+
                     //end of test
-                    Intent intent = new Intent(GyroscopeTestSession.this, MainMenu.class);
+                    Intent intent = new Intent(GyroscopeTestSession.this, EndOfTest.class);
+                    intent.putExtra("test", 2);
                     startActivity(intent);
                 }
 

@@ -8,6 +8,7 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
@@ -25,10 +26,13 @@ public class MainActivity extends AppCompatActivity {
 
         private SharedPreferences prefs;
 
+        private int swipeTime = 0, zoomTime = 0;
+
         @Override
         protected void onCreate(Bundle savedInstanceState) {
             super.onCreate(savedInstanceState);
             setContentView(R.layout.activity_main);
+            getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
 
             databaseReference = FirebaseDatabase.getInstance().getReference("users");
@@ -73,15 +77,16 @@ public class MainActivity extends AppCompatActivity {
 
             if (!TextUtils.isEmpty(userName) && !TextUtils.isEmpty(userAge) &&
                     !TextUtils.isEmpty(userPhone) && !TextUtils.isEmpty(userGender) && !TextUtils.isEmpty(userHand)) {
+                String id = databaseReference.push().getKey();
 
                 //shared prefs
                 SharedPreferences.Editor editor = prefs.edit();
                 editor.putString("name", userName);
+                editor.putString("id", id);
                 editor.apply();
 
-                String id = databaseReference.push().getKey();
 
-                Users users = new Users(id, userName, userAge, userPhone, userGender, userHand);
+                Users users = new Users(id, userName, userAge, userPhone, userGender, userHand, swipeTime, zoomTime);
 
                 databaseReference.child(id).setValue(users);
                 userText.setText("");

@@ -10,27 +10,36 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.MyApplication">
         <activity
+            android:name=".EndOfTest"
+            android:exported="true" />
+        <activity
             android:name=".GyroscopeTestSession"
             android:configChanges="orientation"
             android:exported="true"
             android:screenOrientation="portrait"
-            android:theme="@style/Theme.AppCompat.NoActionBar"/>
-
+            android:theme="@style/Theme.AppCompat.NoActionBar" />
         <activity
             android:name=".InstructionsGyroscope"
-            android:exported="true" />
+            android:configChanges="orientation"
+            android:exported="true"
+            android:screenOrientation="portrait" />
         <activity
             android:name=".AccelerometerInstructions"
-            android:exported="true" />
+            android:configChanges="orientation"
+            android:exported="true"
+            android:screenOrientation="portrait" />
         <activity
             android:name=".AccelerometerSession"
-            android:exported="true" />
+            android:configChanges="orientation"
+            android:exported="true"
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.AppCompat.NoActionBar" />
         <activity
             android:name=".AccelerometerActivityTest"
             android:configChanges="orientation"
             android:exported="true"
             android:screenOrientation="portrait"
-            android:theme="@style/Theme.AppCompat.NoActionBar"/>
+            android:theme="@style/Theme.AppCompat.NoActionBar" />
         <activity
             android:name=".GyroscopeSession"
             android:configChanges="orientation"
@@ -44,10 +53,14 @@
             android:screenOrientation="portrait" />
         <activity
             android:name=".MainMenu"
-            android:exported="true" />
+            android:configChanges="orientation"
+            android:exported="true"
+            android:screenOrientation="portrait" />
         <activity
             android:name=".MainActivity"
-            android:exported="true">
+            android:configChanges="orientation"
+            android:exported="true"
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

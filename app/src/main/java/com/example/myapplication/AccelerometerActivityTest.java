@@ -1,24 +1,40 @@
 package com.example.myapplication;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import androidx.annotation.ColorInt;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.ThreadLocalRandom;
 
 public class AccelerometerActivityTest extends AppCompatActivity {
+    DatabaseReference databaseReference;
+
+    private SharedPreferences prefs;
+
+    private long startTime1, startTime2, endTime1, endTime2;
+    private long swipeTime = 0, zoomTime = 0;
+
     private Accelerometer accelerometer;
 
     private ProgressBar prog;
     private DrawImageView image;
     private TextView nb;
-    private TextView nbImage;
+    private TextView nbImage, testsDone;
 
     private int[] images = {R.drawable.a1, R.drawable.a2, R.drawable.a3, R.drawable.a4,
             R.drawable.a5, R.drawable.a6, R.drawable.a7, R.drawable.a8,
@@ -33,7 +49,7 @@ public class AccelerometerActivityTest extends AppCompatActivity {
     private final int counterDefault = 20;
     private int counterTwoDefault = 2;
     private int counter = 10, zCounter = 10, counterTwo = 2;
-    private int testCounter = 5;
+    private int testCounter = 1;
     private int randomTest = 0, randomSwipeNumber;
 
 
@@ -50,11 +66,14 @@ public class AccelerometerActivityTest extends AppCompatActivity {
         setContentView(R.layout.activity_accelerometer_test);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
+        databaseReference = FirebaseDatabase.getInstance().getReference("users");
+
         accelerometer = new Accelerometer(this);
 
         nb = (TextView) findViewById(R.id.textView2);
         nbImage = (TextView) findViewById(R.id.textView3);
         image = findViewById(R.id.imageView);
+        testsDone = findViewById(R.id.textViewTestDone);
 
         prog = findViewById(R.id.progressBar);
         prog.setMax(100);
@@ -73,11 +92,15 @@ public class AccelerometerActivityTest extends AppCompatActivity {
                         randomSwipeNumber = ThreadLocalRandom.current().nextInt(0, 13);
                         nbImage.setText(" " + (randomSwipeNumber + 1));
                         randomTest = 3;
+                        startTime1 = System.currentTimeMillis();
                     } else if (randomTest == 3) {
                         if (currentImage == randomSwipeNumber) {
                             randomSquare();
                             randomTest = 4;
                             mode = 2;
+                            endTime1 = System.currentTimeMillis();
+                            swipeTime += endTime1 - startTime1;
+                            startTime2 = endTime1;
                         }
                     } else if (randomTest == 4) {
                         if (image.getScaleX() == 5 && image.getX() == imageZoomArrayX[randomX] && image.getY() == imageZoomArrayY[randomY]) {
@@ -89,12 +112,32 @@ public class AccelerometerActivityTest extends AppCompatActivity {
                             randomTest = 0;
                             mode = 0;
                             testCounter--;
+                            testsDone.setText((5 - testCounter) + "/5");
+                            endTime2 = System.currentTimeMillis();
+                            zoomTime += endTime2-startTime2;
                         }
                     }
                 } else {
                     //end of test
 
-                    Intent intent = new Intent(AccelerometerActivityTest.this, MainMenu.class);
+                    prefs = getSharedPreferences("shared_pref_name", Context.MODE_PRIVATE);
+
+                    SharedPreferences.Editor editor = prefs.edit();
+                    editor.putLong("swipe", swipeTime);
+                    editor.putLong("zoom", zoomTime);
+                    editor.apply();
+
+                    String id = prefs.getString("id",null);
+
+                    int swipe = (int)swipeTime;
+                    int zoom = (int)zoomTime;
+
+                    databaseReference.child(id).child("swipeTime").setValue(swipe);
+                    databaseReference.child(id).child("zoomTime").setValue(zoom);
+
+
+                    Intent intent = new Intent(AccelerometerActivityTest.this, EndOfTest.class);
+                    intent.putExtra("test", 1);
                     startActivity(intent);
                 }
 
@@ -148,7 +191,7 @@ public class AccelerometerActivityTest extends AppCompatActivity {
                             counter = counterDefault;
                             set = false;
                             counterTwo = counterTwoDefault;
-                        }else {
+                        } else {
                             mode = 0;
                         }
 
