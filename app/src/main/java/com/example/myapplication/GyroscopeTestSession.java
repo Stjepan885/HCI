@@ -13,6 +13,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.concurrent.ThreadLocalRandom;
 
@@ -42,7 +43,7 @@ public class GyroscopeTestSession extends AppCompatActivity {
     private final int counterDefault = 6;
     private final int rotationLine = 2;
     private int counter = 5;
-    private int testCounter = 5;
+    private int testCounter = 1;
     private int randomTest = 0, randomSwipeNumber;
 
     private float imageX, imageY, defaultImageX, defaultImageY, defaultX, defaultY;
@@ -54,6 +55,8 @@ public class GyroscopeTestSession extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_gyroscope_test_session);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+
+        databaseReference = FirebaseDatabase.getInstance().getReference("users");
 
         gyroscope = new Gyroscope(this);
 
@@ -125,7 +128,6 @@ public class GyroscopeTestSession extends AppCompatActivity {
 
                     //end of test
                     Intent intent = new Intent(GyroscopeTestSession.this, EndOfTest.class);
-                    intent.putExtra("test", 2);
                     startActivity(intent);
                 }
 
@@ -197,9 +199,6 @@ public class GyroscopeTestSession extends AppCompatActivity {
                                 counter = counterDefault;
                                 image.setY(image.getY() + 250);
                             }
-
-                            Log.e("dimenzije", image.getX() + " x " + image.getY() + " y " + image.getScaleX() + " x  scale" + image.getScaleY() + " y");
-                            Log.e("dimenzije", imageLeft + " left " + imageRight + " right " + imageTop + " Top " + imageBottom + " Bottom");
 
                         }
 

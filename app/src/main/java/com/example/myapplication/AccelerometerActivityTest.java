@@ -137,7 +137,6 @@ public class AccelerometerActivityTest extends AppCompatActivity {
 
 
                     Intent intent = new Intent(AccelerometerActivityTest.this, EndOfTest.class);
-                    intent.putExtra("test", 1);
                     startActivity(intent);
                 }
 
