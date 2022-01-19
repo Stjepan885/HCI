@@ -103,7 +103,8 @@ public class AccelerometerActivityTest extends AppCompatActivity {
                             startTime2 = endTime1;
                         }
                     } else if (randomTest == 4) {
-                        if (image.getScaleX() == 5 && image.getX() == imageZoomArrayX[randomX] && image.getY() == imageZoomArrayY[randomY]) {
+                        if (image.getScaleX() == 5 && image.getX() < imageZoomArrayX[randomX] + 800 && image.getX() > imageZoomArrayX[randomX] - 800
+                                && image.getY() < imageZoomArrayY[randomY] + 800 && image.getY() > imageZoomArrayY[randomY] - 800) {
                             image.setX(defaultX);
                             image.setY(defaultY);
                             image.setScaleX(1);

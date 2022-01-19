@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.WindowManager;
 import android.widget.Button;
@@ -28,7 +29,8 @@ public class GyroscopeTestSession extends AppCompatActivity {
 
     private ProgressBar prog;
     private DrawImageView image;
-    private TextView nbImage, testsDone;;
+    private TextView nbImage, testsDone;
+
 
     private final int[] images = {R.drawable.a1, R.drawable.a2, R.drawable.a3, R.drawable.a4,
             R.drawable.a5, R.drawable.a6, R.drawable.a7, R.drawable.a8,
@@ -56,6 +58,12 @@ public class GyroscopeTestSession extends AppCompatActivity {
         setContentView(R.layout.activity_gyroscope_test_session);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
+        DisplayMetrics displayMetrics = new DisplayMetrics();
+        getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
+        int height = displayMetrics.heightPixels;
+        int width = displayMetrics.widthPixels;
+        Log.e("koordinate", "X " + height + "Y " + width);
+
         databaseReference = FirebaseDatabase.getInstance().getReference("users");
 
         gyroscope = new Gyroscope(this);
@@ -80,9 +88,12 @@ public class GyroscopeTestSession extends AppCompatActivity {
             @Override
             public void onRotation(float x, float y, float z) {
 
+                //Log.e("koordinate", "X " + image.getX() + "Y " + image.getY());
+
                 if (testCounter != 0) {
                     if (randomTest == 0) {
                         randomSwipeNumber = ThreadLocalRandom.current().nextInt(0, 13);
+                        randomSwipeNumber = 0;
                         nbImage.setText(" " + (randomSwipeNumber + 1));
                         randomTest = 3;
                         startTime1 = System.currentTimeMillis();
@@ -96,7 +107,8 @@ public class GyroscopeTestSession extends AppCompatActivity {
                             startTime2 = endTime1;
                         }
                     } else if (randomTest == 4) {
-                        if (image.getScaleX() == 5 && image.getX() == imageZoomArrayX[randomX] && image.getY() == imageZoomArrayY[randomY]) {
+                        if (image.getScaleX() == 5 && image.getX() < imageZoomArrayX[randomX] + 800 && image.getX() > imageZoomArrayX[randomX] - 800
+                                && image.getY() < imageZoomArrayY[randomY] + 800 && image.getY() > imageZoomArrayY[randomY] - 800) {
                             image.setX(defaultX);
                             image.setY(defaultY);
                             image.setScaleX(1);
@@ -107,7 +119,7 @@ public class GyroscopeTestSession extends AppCompatActivity {
                             testCounter--;
                             testsDone.setText((5 - testCounter) + "/5");
                             endTime2 = System.currentTimeMillis();
-                            zoomTime += endTime2-startTime2;
+                            zoomTime += endTime2 - startTime2;
                         }
                     }
                 } else {
@@ -118,10 +130,10 @@ public class GyroscopeTestSession extends AppCompatActivity {
                     editor.putLong("zoomG", zoomTime);
                     editor.apply();
 
-                    String id = prefs.getString("id",null);
+                    String id = prefs.getString("id", null);
 
-                    int swipe = (int)swipeTime;
-                    int zoom = (int)zoomTime;
+                    int swipe = (int) swipeTime;
+                    int zoom = (int) zoomTime;
 
                     databaseReference.child(id).child("swipeTimeG").setValue(swipe);
                     databaseReference.child(id).child("zoomTimeG").setValue(zoom);
@@ -226,13 +238,17 @@ public class GyroscopeTestSession extends AppCompatActivity {
                 } else {
                     prog.setProgress(100 - (16 * (counter)));
                 }
+                randomX = ThreadLocalRandom.current().nextInt(1, 4);
+                randomY = ThreadLocalRandom.current().nextInt(1, 7);
+
             }
+
         });
     }
 
     private void randomSquare() {
         randomX = ThreadLocalRandom.current().nextInt(1, 4);
-        randomY = ThreadLocalRandom.current().nextInt(1, 7);
+        randomY = ThreadLocalRandom.current().nextInt(1, 6);
 
         imageLeft = image.getX() + 20 + 250 * randomX;
         imageTop = image.getX() + 20 + 250 * randomX + 250;
