@@ -26,15 +26,37 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text=""/>
+                android:text="Cilj ovog testa je da se pomoću linearnog ubrzanja prelistavaju slike galerije, te približava i udaljava određena slika. Mobitel je potrebno držati jednom rukom u uobičajenom položaju korištenja mobitela.  "/>
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text=""/>
+                android:text="Test je osmišljen na način da se dobije nasumični broj koji predstavlja redni broj slike u galeriji. Kada se dobije taj broj, potrebno je prelistati galeriju do određene slike. Nakon što se prikaže željen slika, na samoj slici se generira nasumični kvadrat. Zatim je sliku potrebno približiti sve dok dio slike koji se nalazi u kvadratu ne zauzme cijeli zaslon. Ovo je potrebno ponoviti pet puta. "/>
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text=""/>
+                android:text="Pokretanjem testa pomoću gumba dolje, pokreče se aktivnost u kojoj je moguće isprobati način na koji aplikacija funkcionira. "/>
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Prilikom pokretanja prikazuje se prva slika galerije. Na vrhu zaslona nalazi se traka napretka, a na dnu se nalazi broj koji označava koja se trenutno slika galerije prikazuje i ukupni broj slika. U lijevom donjem kutu prikazan je broj koji označava redni broj slike do koje je potrebno doći. "
+                />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Za prelistavanje jedne slike koristi se pomicanje po x-osi mobitela(desno => slika +1, lijevo => slika-1), dok se za prelistavanje pet slika koristi os z (gore => slika+5, dolje => slika-5). "/>
+           <TextView
+               android:layout_width="match_parent"
+               android:layout_height="wrap_content"
+               android:text="Kako bi se registrirala naredba, potrebno je pričekati da se traka napretka u potpunosti ispuni. Nakon sto se mobitel pomakne potrebno je mobitel vrati u početni položaj prije nego li se traka napretka ponovno popuni"
+               android:textStyle="bold"
+               />
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Za približavanje slike koristi se os X. (približavanje mobitela prema sebi za zoom+ , udaljavanje mobitela od sebe za zoom-). Kod prvog približavanja, ulazi se u Zoom-mod u kojem je moguće šetati po slici pomoću x i y osi (desno-lijevo, gore-dolje). Pritiskom zaslona moguće je mjenjati veličinu koraka kojim se šeće po slici. Kako bi se izašlo iz Zoom-moda potrebno je udaljiti sliku do originalne veličine."
+                />
+
             <Button
                 android:layout_width="200dp"
                 android:layout_height="wrap_content"

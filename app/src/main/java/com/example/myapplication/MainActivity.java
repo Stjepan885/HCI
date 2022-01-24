@@ -28,7 +28,7 @@ public class MainActivity extends AppCompatActivity {
 
     private SharedPreferences prefs;
 
-    private int swipeTime = 0, zoomTime = 0;
+    private String swipeTime = "0", zoomTime = "0";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -99,7 +99,7 @@ public class MainActivity extends AppCompatActivity {
             editor.apply();
 
 
-            Users users = new Users(id, userName, userAge, userPhone, userGender, userHand, swipeTime, zoomTime);
+            Users users = new Users(id, userName, userAge, userPhone, userGender, userHand, swipeTime, zoomTime, swipeTime, zoomTime);
 
             databaseReference.child(id).setValue(users);
             userText.setText("");

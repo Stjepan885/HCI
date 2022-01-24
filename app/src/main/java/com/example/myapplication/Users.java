@@ -7,16 +7,20 @@ package com.example.myapplication;
             private String phoneText;
             private String genderText;
             private String handText;
-            private int swipeTime;
-            private int zoomTime;
-            private int swipeTimeG = 0;
-            private int zoomTimeG = 0;
+            private String swipeTime;
+            private String zoomTime;
+            private String swipeTimeG;
+            private String zoomTimeG;
+            private int locSwipeG = 0;
+            private int locZoomG = 0;
+            private int locSwipe = 0;
+            private int locZoom = 0;
 
             public Users(){
 
             }
 
-            public Users(String userID, String userText, String ageText, String phoneText, String genderText, String handText, int swipeTime, int zoomTime) {
+            public Users(String userID, String userText, String ageText, String phoneText, String genderText, String handText, String swipeTime, String zoomTime, String swipeTimeG, String zoomTimeG) {
                 this.userID = userID;
                 this.userText = userText;
                 this.ageText = ageText;
@@ -47,11 +51,11 @@ package com.example.myapplication;
                 return handText;
             }
 
-            public int getSwipeTime() {
+            public String getSwipeTime() {
                 return swipeTime;
             }
 
-            public int getZoomTime() {
+            public String getZoomTime() {
                 return zoomTime;
             }
 

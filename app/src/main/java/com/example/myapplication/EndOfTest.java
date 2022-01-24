@@ -37,12 +37,12 @@ public class EndOfTest extends AppCompatActivity {
 
         if (swipeTime != 0 && zoomTime != 0){
             finished1.setText("da");
-            time1.setText("" + swipeTime+zoomTime);
+            time1.setText("" + (swipeTime+zoomTime));
         }
 
         if (swipeTimeG != 0 && zoomTimeG != 0){
             finished2.setText("da");
-            time2.setText("" + swipeTimeG+zoomTimeG);
+            time2.setText("" + (swipeTimeG+zoomTimeG));
         }
 
         mainMenu.setOnClickListener(new View.OnClickListener() {

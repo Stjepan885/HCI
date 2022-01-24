@@ -55,7 +55,9 @@
             android:name=".MainMenu"
             android:configChanges="orientation"
             android:exported="true"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait"
+            android:label="HCI"
+            />
         <activity
             android:name=".MainActivity"
             android:configChanges="orientation"

@@ -21,6 +21,36 @@
         />
 
     <TextView
+        android:id="@+id/textViewKorak"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Korak: 1"
+        android:textColor="@color/white"
+        android:textColorHighlight="@color/black"
+        android:textSize="15sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.876"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.513" />
+
+    <TextView
+        android:id="@+id/textViewZoom"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Zoom: 0"
+        android:textColor="@color/white"
+        android:textColorHighlight="@color/black"
+        android:textSize="15sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.876"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.068" />
+
+    <TextView
         android:id="@+id/textViewTestDone"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
