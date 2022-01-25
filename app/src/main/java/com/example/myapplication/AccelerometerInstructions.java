@@ -33,41 +33,8 @@ public class AccelerometerInstructions extends AppCompatActivity {
         startTest.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                prefs = getSharedPreferences("shared_pref_name", Context.MODE_PRIVATE);
-                long swipe = prefs.getLong("swipe", 0);
-                long zoom = prefs.getLong("zoom", 0);
-
-                if (swipe == 0 && zoom == 0) {
-                    Intent intent = new Intent(AccelerometerInstructions.this, AccelerometerSession.class);
-                    startActivity(intent);
-                }else{
-
-
-                        // inflate the layout of the popup window
-                        LayoutInflater inflater = (LayoutInflater)
-                                getSystemService(LAYOUT_INFLATER_SERVICE);
-                        View popupView = inflater.inflate(R.layout.popup_window, null);
-
-                        // create the popup window
-                        int width = LinearLayout.LayoutParams.WRAP_CONTENT;
-                        int height = LinearLayout.LayoutParams.WRAP_CONTENT;
-                        boolean focusable = true; // lets taps outside the popup also dismiss it
-                        final PopupWindow popupWindow = new PopupWindow(popupView, width, height, focusable);
-
-                        // show the popup window
-                        // which view you pass in doesn't matter, it is only used for the window tolken
-                        popupWindow.showAtLocation(startTest, Gravity.CENTER, 0, 0);
-
-                        // dismiss the popup window when touched
-                        popupView.setOnTouchListener(new View.OnTouchListener() {
-                            @Override
-                            public boolean onTouch(View v, MotionEvent event) {
-                                popupWindow.dismiss();
-                                return true;
-                            }
-                        });
-
-                }
+                Intent intent = new Intent(AccelerometerInstructions.this, AccelerometerSession.class);
+                startActivity(intent);
             }
         });
     }
