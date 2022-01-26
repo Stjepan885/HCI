@@ -46,20 +46,26 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Za prelistavanje jedne slike koristi se rotacija po y-osi mobitela, dok se za prelistavanje pet slika koristi os x.
-
-Za približavanje, odnosno udaljavanje koristi se os z."/>
+                android:text="Za prelistavanje jedne slike koristi se rotacija po y-osi mobitela (desno => slika +1, lijevo => slika-1), dok se za prelistavanje pet slika koristi os x (gore => slika+5, dolje => slika-5). "/>
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Kako bi se registrirala rotacija mobitela potrebno je pričekati da se traka napretka u potpunosti ispuni. Nakon sto se rotacija obavi potrebno je mobitel vrati u početni položaj prije nego li se traka napretka ponovno popuni."/>
 
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Za približavanje, odnosno udaljavanje koristi se os z."/>
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Kod prvog približavanja, ulazi se u Zoom-mod u kojem je moguće šetati po slici. Kako bi se izašlo iz Zoom-moda potrebno je udaljiti sliku do originalne veličine. Pritiskom zaslona moguće je mijenjati veličinu koraka kojim se šeće po slici. "/>
             <Button
                 android:layout_width="200dp"
                 android:layout_height="wrap_content"
                 android:id="@+id/startButtonAccTest"
                 android:layout_gravity="center"
-                android:text="test accelerometer"/>
+                android:text="test gyroscope"/>
         </LinearLayout>
     </ScrollView>
 

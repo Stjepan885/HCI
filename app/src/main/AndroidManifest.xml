@@ -22,12 +22,14 @@
             android:name=".InstructionsGyroscope"
             android:configChanges="orientation"
             android:exported="true"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait"
+            android:label="Instructions Gyroscope"/>
         <activity
             android:name=".AccelerometerInstructions"
             android:configChanges="orientation"
             android:exported="true"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait"
+            android:label="Instructions Accelerometer"/>
         <activity
             android:name=".AccelerometerSession"
             android:configChanges="orientation"

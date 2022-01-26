@@ -38,7 +38,11 @@ public class GyroscopeTestSession extends AppCompatActivity {
     private final int[] images = {R.drawable.a1, R.drawable.a2, R.drawable.a3, R.drawable.a4,
             R.drawable.a5, R.drawable.a6, R.drawable.a7, R.drawable.a8,
             R.drawable.a9, R.drawable.a10, R.drawable.a11, R.drawable.a12,
-            R.drawable.a13, R.drawable.a14};
+            R.drawable.a13, R.drawable.a14,
+            R.drawable.a5, R.drawable.a6, R.drawable.a7, R.drawable.a8,
+            R.drawable.a1, R.drawable.a2, R.drawable.a3, R.drawable.a4,
+            R.drawable.a13, R.drawable.a14,
+            R.drawable.a9, R.drawable.a10, R.drawable.a11, R.drawable.a12};
 
     private int currentImage = 0, squareImage;
     private int mode = 0; // 0 - swipe 1 - zoom
@@ -102,12 +106,9 @@ public class GyroscopeTestSession extends AppCompatActivity {
         gyroscope.setListener(new Gyroscope.Listener() {
             @Override
             public void onRotation(float x, float y, float z) {
-                // Log.e("koordinate", "Xbla " + image.getX() + "Y " + image.getY());
-
                 if (testCounter != 0) {
-
                     if (randomTest == 0) {
-                        randomSwipeNumber = ThreadLocalRandom.current().nextInt(0, 13);
+                        randomSwipeNumber = ThreadLocalRandom.current().nextInt(0, 27);
                         nbImage.setText(" " + (randomSwipeNumber + 1));
                         randomTest = 3;
                         startTime1 = System.currentTimeMillis();
@@ -199,8 +200,8 @@ public class GyroscopeTestSession extends AppCompatActivity {
                             }
                             if (currentImage < 0) {
                                 currentImage = 0;
-                            } else if (currentImage > 13) {
-                                currentImage = 13;
+                            } else if (currentImage > 27) {
+                                currentImage = 27;
                             }
                         }
 
@@ -344,7 +345,7 @@ public class GyroscopeTestSession extends AppCompatActivity {
     }
 
     private void zoomIn() {
-        if (image.getScaleX() == 5) {
+        if (image.getScaleX() == 4) {
             return;
         }
         image.setScaleX(image.getScaleX() + 1);

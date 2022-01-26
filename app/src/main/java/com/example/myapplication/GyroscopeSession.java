@@ -1,57 +1,86 @@
 package com.example.myapplication;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.util.DisplayMetrics;
 import android.util.Log;
+import android.view.MotionEvent;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+
 import java.util.concurrent.ThreadLocalRandom;
 
 public class GyroscopeSession extends AppCompatActivity {
+
+    private long startTime1, startTime2, endTime1, endTime2;
+    private long swipeTime = 0l, zoomTime = 0l;
 
     private Gyroscope gyroscope;
 
     private ProgressBar prog;
     private DrawImageView image;
-    private TextView nbImage;
+    private TextView nbImage, testsDone, zoomText, stepText;
+
 
     private final int[] images = {R.drawable.a1, R.drawable.a2, R.drawable.a3, R.drawable.a4,
             R.drawable.a5, R.drawable.a6, R.drawable.a7, R.drawable.a8,
             R.drawable.a9, R.drawable.a10, R.drawable.a11, R.drawable.a12,
             R.drawable.a13, R.drawable.a14};
-    private final int[] imageZoomArrayX = {1750, 750, -500, -1750};
-    private final int[] imageZoomArrayY = {3750, 2500, 1250, 0, -1250, -2500, -3750};
 
-    private int currentImage = 0;
+    private int currentImage = 0, squareImage;
     private int mode = 0; // 0 - swipe 1 - zoom
 
-    private final int counterDefault = 6;
+    private final int counterDefault = 7;
     private final int rotationLine = 2;
-    private int counter = 5;
-    private int testCounter = 5;
+    private int counter = 7;
+    private int testCounter = 10;
     private int randomTest = 0, randomSwipeNumber;
 
     private float imageX, imageY, defaultImageX, defaultImageY, defaultX, defaultY;
     private float imageLeft, imageRight, imageTop, imageBottom;
     private int randomX, randomY;
 
+    private boolean size = true;
+    private int screenWidth, screenHeight;
+
+    private int imageCenterWidth, imageCenterHeight;
+
+    private int step = 100;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_gyroscope_test_session);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
+                WindowManager.LayoutParams.FLAG_FULLSCREEN);
+
+        DisplayMetrics displayMetrics = new DisplayMetrics();
+        getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
+        screenHeight = displayMetrics.heightPixels;
+        screenWidth = displayMetrics.widthPixels;
 
         gyroscope = new Gyroscope(this);
 
         Button button = (Button) findViewById(R.id.button);
         TextView nb = (TextView) findViewById(R.id.textView2);
         nbImage = (TextView) findViewById(R.id.textView3);
+        testsDone = findViewById(R.id.textViewTestDone);
+        zoomText = findViewById(R.id.textViewZoom);
+        stepText = findViewById(R.id.textViewKorak);
 
         prog = findViewById(R.id.progressBar);
         prog.setMax(100);
@@ -67,8 +96,8 @@ public class GyroscopeSession extends AppCompatActivity {
         gyroscope.setListener(new Gyroscope.Listener() {
             @Override
             public void onRotation(float x, float y, float z) {
-
                 if (testCounter != 0) {
+
                     if (randomTest == 0) {
                         randomSwipeNumber = ThreadLocalRandom.current().nextInt(0, 13);
                         nbImage.setText(" " + (randomSwipeNumber + 1));
@@ -76,25 +105,40 @@ public class GyroscopeSession extends AppCompatActivity {
                     } else if (randomTest == 3) {
                         if (currentImage == randomSwipeNumber) {
                             randomSquare();
+                            squareImage = currentImage;
                             randomTest = 4;
                             mode = 2;
                         }
                     } else if (randomTest == 4) {
-                        if (image.getScaleX() == 5 && image.getX() == imageZoomArrayX[randomX] && image.getY() == imageZoomArrayY[randomY]) {
-                            image.setX(defaultX);
-                            image.setY(defaultY);
-                            image.setScaleX(1);
-                            image.setScaleY(1);
+                        if (squareImage != currentImage) {
+                            randomTest = 5;
                             randomSquareZero();
-                            randomTest = 0;
-                            mode = 0;
-                            testCounter--;
+                        } else if (image.getScaleX() == 4) {
+                            if (((Math.abs(image.getX())) > Math.abs((screenWidth / 2) * (randomX + 1) * (-1)) + 99 && Math.abs(image.getX()) < Math.abs(((screenWidth * 4) / 8) * ((randomX + 1)) * (-1)) - 99)
+                                    || ((Math.abs(image.getX())) < Math.abs((screenWidth / 2) * (randomX + 1) * (-1)) + 99 && Math.abs(image.getX()) > Math.abs(((screenWidth * 4) / 8) * ((randomX + 1)) * (-1)) - 99)) {
+                                if (((Math.abs(image.getY())) > Math.abs((screenHeight / 2) * (randomY + 1) * (-1)) + 99 && Math.abs(image.getY()) < Math.abs(((screenHeight * 4) / 8) * ((randomY + 1)) * (-1)) - 99)
+                                        || ((Math.abs(image.getY())) < Math.abs((screenHeight / 2) * (randomY + 1) * (-1)) + 99 && Math.abs(image.getY()) > Math.abs(((screenHeight * 4) / 8) * ((randomY + 1)) * (-1)) - 99)) {
+                                    image.setX(defaultX);
+                                    image.setY(defaultY);
+                                    image.setScaleX(1);
+                                    image.setScaleY(1);
+                                    randomSquareZero();
+                                    randomTest = 0;
+                                    mode = 0;
+                                    testCounter--;
+                                    testsDone.setText((5 - testCounter) + "");
+                                }
+                            }
+                        }
+                    } else if (randomTest == 5) {
+                        if (squareImage == currentImage) {
+                            randomSquareOld(randomX, randomY);
+                            randomTest = 4;
                         }
                     }
                 } else {
-                    //end of test
-
-
+                    Intent intent = new Intent(GyroscopeSession.this, MainMenu.class);
+                    startActivity(intent);
                 }
 
                 switch (mode) {
@@ -113,9 +157,9 @@ public class GyroscopeSession extends AppCompatActivity {
                                 currentImage += 5;
                                 counter = counterDefault;
                             } else if (z <= -rotationLine) {
+                                mode = 1;
                                 zoomIn();
                                 counter = counterDefault;
-                                mode = 1;
                             } else {
                                 mode = 0;
                             }
@@ -131,15 +175,15 @@ public class GyroscopeSession extends AppCompatActivity {
                         }
                         image.setImageResource(images[currentImage]);
 
-                        nb.setText((currentImage + 1) + "/14");
+                        nb.setText((currentImage + 1) + "/28");
                         break;
                     case 1:
                         if (counter == 0) {
                             if (z <= -rotationLine) {
-                                counter = counterDefault;
                                 if (image.getScaleX() < 5f) {
                                     zoomIn();
                                 }
+                                counter = counterDefault;
                             } else if (z >= rotationLine) {
                                 zoomOut();
                                 if (image.getScaleY() == defaultImageY) {
@@ -150,24 +194,21 @@ public class GyroscopeSession extends AppCompatActivity {
                                 counter = counterDefault;
                             } else if (y >= rotationLine) {
 
-                                image.setX(image.getX() - 250);
+                                image.setX(image.getX() - step);
 
                                 counter = counterDefault;
                             } else if (y <= -rotationLine) {
 
-                                image.setX(image.getX() + 250);
+                                image.setX(image.getX() + step);
 
                                 counter = counterDefault;
                             } else if (x >= rotationLine) {
                                 counter = counterDefault;
-                                image.setY(image.getY() - 250);
+                                image.setY(image.getY() - step);
                             } else if (x <= -rotationLine) {
                                 counter = counterDefault;
-                                image.setY(image.getY() + 250);
+                                image.setY(image.getY() + step);
                             }
-
-                            Log.e("dimenzije", image.getX() + " x " + image.getY() + " y " + image.getScaleX() + " x  scale" + image.getScaleY() + " y");
-                            Log.e("dimenzije", imageLeft + " left " + imageRight + " right " + imageTop + " Top " + imageBottom + " Bottom");
 
                         }
 
@@ -196,35 +237,59 @@ public class GyroscopeSession extends AppCompatActivity {
                     prog.setProgress(100 - (16 * (counter)));
                 }
             }
+
         });
     }
 
     private void randomSquare() {
-        randomX = ThreadLocalRandom.current().nextInt(1, 4);
-        randomY = ThreadLocalRandom.current().nextInt(1, 7);
+        randomX = ThreadLocalRandom.current().nextInt(-3, 2);
+        randomY = ThreadLocalRandom.current().nextInt(-3, 2);
 
-        imageLeft = image.getX() + 20 + 250 * randomX;
-        imageTop = image.getX() + 20 + 250 * randomX + 250;
-        imageRight = image.getY() + 250 * randomY;
-        imageBottom = image.getY() + 250 * randomY + 350;
+        imageLeft = screenWidth / 2 + (screenWidth / 8) * (randomX);
+        imageRight = screenWidth / 2 + (screenWidth / 8) * (randomX + 2);
+        imageTop = screenHeight / 2 + (screenHeight / 8) * randomY;
+        imageBottom = screenHeight / 2 + (screenHeight / 8) * (randomY + 2);
 
-        Log.e(" " + image.getHeight(), " ");
-        Log.e(" " + image.getWidth(), " ");
+        imageCenterWidth = (int) ((imageLeft + imageRight));
+        imageCenterHeight = (int) ((imageRight + imageBottom) / 2 - (image.getHeight() / 2));
+
+        Log.e("center ", " x " + imageCenterWidth);
 
         image.left = imageLeft;
-        image.top = imageRight;
-        image.right = imageTop;
+        image.top = imageTop;
+        image.right = imageRight;
         image.bottom = imageBottom;
 
         image.invalidate();
         image.drawRect = true;
     }
 
+    private void randomSquareOld(int randomX, int randomY) {
+        imageLeft = screenWidth / 2 + (screenWidth / 8) * (randomX);
+        imageRight = screenWidth / 2 + (screenWidth / 8) * (randomX + 2);
+        imageTop = screenHeight / 2 + (screenHeight / 8) * randomY;
+        imageBottom = screenHeight / 2 + (screenHeight / 8) * (randomY + 2);
+
+        imageCenterWidth = (int) ((imageLeft + imageRight));
+        imageCenterHeight = (int) ((imageRight + imageBottom) / 2 - (image.getHeight() / 2));
+
+        Log.e("center ", " x " + imageCenterWidth);
+
+        image.left = imageLeft;
+        image.top = imageTop;
+        image.right = imageRight;
+        image.bottom = imageBottom;
+
+        image.invalidate();
+        image.drawRect = true;
+    }
+
+
     private void randomSquareZero() {
-        image.left = 0;
-        image.top = 0;
-        image.right = 0;
-        image.bottom = 0;
+        image.left = -100;
+        image.top = -100;
+        image.right = -100;
+        image.bottom = -100;
 
         image.invalidate();
         image.drawRect = true;
@@ -237,6 +302,18 @@ public class GyroscopeSession extends AppCompatActivity {
         imageX = image.getScaleX();
         imageY = image.getScaleY();
         checkImageBorder();
+        zoomText.setText("Zoom: " + (image.getScaleX() - 1));
+    }
+
+    private void zoomIn() {
+        if (image.getScaleX() == 4) {
+            return;
+        }
+        image.setScaleX(image.getScaleX() + 1);
+        image.setScaleY(image.getScaleY() + 1);
+        imageX = image.getScaleX();
+        imageY = image.getScaleY();
+        zoomText.setText("Zoom: " + (image.getScaleX() - 1));
     }
 
     private void checkImageBorder() {
@@ -285,16 +362,6 @@ public class GyroscopeSession extends AppCompatActivity {
         }
     }
 
-    private void zoomIn() {
-        if (image.getScaleX() == 5) {
-            return;
-        }
-        image.setScaleX(imageX + 1);
-        image.setScaleY(imageY + 1);
-        imageX = image.getScaleX();
-        imageY = image.getScaleY();
-    }
-
     @Override
     protected void onResume() {
         super.onResume();
@@ -308,5 +375,44 @@ public class GyroscopeSession extends AppCompatActivity {
         gyroscope.unregister();
     }
 
+    @Override
+    public boolean onTouchEvent(MotionEvent event) {
+        int eventaction = event.getAction();
+
+        if (eventaction == MotionEvent.ACTION_DOWN) {
+            step += 100;
+
+            if (step == 400) {
+                step = 100;
+            }
+        }
+        stepText.setText("Korak: " + step / 100);
+        return super.onTouchEvent(event);
+    }
+
+    @Override
+    public void onBackPressed() {
+        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
+        alertDialogBuilder.setTitle("Exit Session?");
+        alertDialogBuilder
+                .setMessage("Click yes to exit!")
+                .setCancelable(false)
+                .setPositiveButton("Yes",
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                finish();
+                            }
+                        })
+
+                .setNegativeButton("No", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+
+                        dialog.cancel();
+                    }
+                });
+
+        AlertDialog alertDialog = alertDialogBuilder.create();
+        alertDialog.show();
+    }
 
 }

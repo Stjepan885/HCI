@@ -42,7 +42,11 @@ public class AccelerometerActivityTest extends AppCompatActivity {
     private int[] images = {R.drawable.a1, R.drawable.a2, R.drawable.a3, R.drawable.a4,
             R.drawable.a5, R.drawable.a6, R.drawable.a7, R.drawable.a8,
             R.drawable.a9, R.drawable.a10, R.drawable.a11, R.drawable.a12,
-            R.drawable.a13, R.drawable.a14};
+            R.drawable.a13, R.drawable.a14,
+            R.drawable.a5, R.drawable.a6, R.drawable.a7, R.drawable.a8,
+            R.drawable.a1, R.drawable.a2, R.drawable.a3, R.drawable.a4,
+            R.drawable.a13, R.drawable.a14,
+            R.drawable.a9, R.drawable.a10, R.drawable.a11, R.drawable.a12};
 
     private int currentImage = 0, squareImage;
     private int mode = 0; // 0 - swipe 1 - zoom
@@ -107,7 +111,7 @@ public class AccelerometerActivityTest extends AppCompatActivity {
 
                 if (testCounter != 0) {
                     if (randomTest == 0) {
-                        randomSwipeNumber = ThreadLocalRandom.current().nextInt(0, 13);
+                        randomSwipeNumber = ThreadLocalRandom.current().nextInt(0, 27);
                         nbImage.setText(" " + (randomSwipeNumber + 1));
                         randomTest = 3;
                         startTime1 = System.currentTimeMillis();
@@ -233,8 +237,8 @@ public class AccelerometerActivityTest extends AppCompatActivity {
 
                         if (currentImage < 0) {
                             currentImage = 0;
-                        } else if (currentImage > 13) {
-                            currentImage = 13;
+                        } else if (currentImage > 27) {
+                            currentImage = 27;
                         }
                         image.setImageResource(images[currentImage]);
                         break;
@@ -302,7 +306,7 @@ public class AccelerometerActivityTest extends AppCompatActivity {
                 if (counter > 0) {
                     counter--;
                 }
-                nb.setText((currentImage + 1) + "/14");
+                nb.setText((currentImage + 1) + "/28");
             }
         });
 
@@ -375,7 +379,7 @@ public class AccelerometerActivityTest extends AppCompatActivity {
     }
 
     private void zoomIn() {
-        if (image.getScaleX() == 5) {
+        if (image.getScaleX() == 4) {
             return;
         }
         image.setScaleX(image.getScaleX() + 1);
