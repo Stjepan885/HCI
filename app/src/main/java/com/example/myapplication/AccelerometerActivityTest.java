@@ -43,10 +43,8 @@ public class AccelerometerActivityTest extends AppCompatActivity {
             R.drawable.a5, R.drawable.a6, R.drawable.a7, R.drawable.a8,
             R.drawable.a9, R.drawable.a10, R.drawable.a11, R.drawable.a12,
             R.drawable.a13, R.drawable.a14,
-            R.drawable.a5, R.drawable.a6, R.drawable.a7, R.drawable.a8,
             R.drawable.a1, R.drawable.a2, R.drawable.a3, R.drawable.a4,
-            R.drawable.a13, R.drawable.a14,
-            R.drawable.a9, R.drawable.a10, R.drawable.a11, R.drawable.a12};
+            R.drawable.a5, R.drawable.a6};
 
     private int currentImage = 0, squareImage;
     private int mode = 0; // 0 - swipe 1 - zoom
@@ -54,7 +52,7 @@ public class AccelerometerActivityTest extends AppCompatActivity {
     private final int counterDefault = 20;
     private int counterTwoDefault = 2;
     private int counter = 10, zCounter = 10, counterTwo = 2;
-    private int testCounter = 1;
+    private int testCounter = 20;
     private int randomTest = 0, randomSwipeNumber;
 
 
@@ -72,6 +70,13 @@ public class AccelerometerActivityTest extends AppCompatActivity {
     private int step = 100;
 
     private int locSwipe = 0, locZoom = 0;
+
+    StringBuilder swipeTimeArray = new StringBuilder();
+    StringBuilder swipeLocArray = new StringBuilder();
+    StringBuilder zoomTimeArray = new StringBuilder();
+    StringBuilder zoomLocArray = new StringBuilder();
+
+    public String id;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -105,17 +110,36 @@ public class AccelerometerActivityTest extends AppCompatActivity {
         defaultX = image.getX();
         defaultY = image.getX();
 
+        swipeTimeArray.append("#");
+        swipeLocArray.append("#");
+        zoomTimeArray.append("#");
+        zoomLocArray.append("#");
+
+        prefs = getSharedPreferences("shared_pref_name", Context.MODE_PRIVATE);
+        id = prefs.getString("id", null);
+
         accelerometer.setListener(new Accelerometer.Listener() {
             @Override
             public void onTranslation(float x, float y, float z) {
 
                 if (testCounter != 0) {
                     if (randomTest == 0) {
-                        randomSwipeNumber = ThreadLocalRandom.current().nextInt(0, 27);
+                        randomSwipeNumber = ThreadLocalRandom.current().nextInt(0, 19);
                         nbImage.setText(" " + (randomSwipeNumber + 1));
                         randomTest = 3;
                         startTime1 = System.currentTimeMillis();
-                        locSwipe = locSwipe + randomSwipeNumber;
+
+                        int loc;
+                        if (randomSwipeNumber > currentImage){
+                            loc = randomSwipeNumber - currentImage;
+                        }else{
+                            loc = currentImage - randomSwipeNumber;
+                        }
+
+                        locSwipe = locSwipe + loc;
+                        databaseReference.child(id).child("swipeLocArray1").child(String.valueOf(20-testCounter)).setValue(loc);
+                        swipeLocArray.append(String.valueOf(loc));
+                        swipeLocArray.append("#");
                     } else if (randomTest == 3) {
                         if (currentImage == randomSwipeNumber) {
                             randomSquare();
@@ -123,8 +147,13 @@ public class AccelerometerActivityTest extends AppCompatActivity {
                             randomTest = 4;
                             mode = 2;
                             endTime1 = System.currentTimeMillis();
-                            swipeTime += endTime1 - startTime1;
+                            long diff = endTime1 - startTime1 - 730;
+                            swipeTime += diff;
+                            diff = diff /100;
+                            swipeTimeArray.append(diff);
+                            swipeTimeArray.append("#");
                             startTime2 = endTime1;
+                            databaseReference.child(id).child("swipeTimeArray1").child(String.valueOf(20-testCounter)).setValue(diff);
                         }
                     } else if (randomTest == 4) {
                         if (squareImage != currentImage) {
@@ -143,9 +172,14 @@ public class AccelerometerActivityTest extends AppCompatActivity {
                                     randomTest = 0;
                                     mode = 0;
                                     testCounter--;
-                                    testsDone.setText((5 - testCounter) + "/5");
+                                    testsDone.setText((20 - testCounter) + "/20");
                                     endTime2 = System.currentTimeMillis();
-                                    zoomTime += endTime2 - startTime2;
+                                    long dif = endTime2 - startTime2 - 730;
+                                    zoomTime += dif;
+                                    dif = dif / 100;
+                                    zoomTimeArray.append(dif);
+                                    zoomTimeArray.append("#");
+                                    databaseReference.child(id).child("zoomTimeArray1").child(String.valueOf(20-testCounter)).setValue(dif);
                                 }
                             }
                         }
@@ -175,6 +209,21 @@ public class AccelerometerActivityTest extends AppCompatActivity {
 
                     databaseReference.child(id).child("locSwipe").setValue(locSwipe);
                     databaseReference.child(id).child("locZoom").setValue(locZoom);
+
+                    swipeLocArray.append("%");
+                    swipeTimeArray.append("%");
+                    zoomLocArray.append("%");
+                    zoomTimeArray.append("%");
+
+                    String s = swipeTimeArray.toString();
+                    String ss = swipeLocArray.toString();
+                    databaseReference.child(id).child("swipeTimeArray").setValue(s);
+                    databaseReference.child(id).child("swipeLocArray").setValue(ss);
+
+                    String sL = zoomTimeArray.toString();
+                    String ssL = zoomLocArray.toString();
+                    databaseReference.child(id).child("zoomTimeArray").setValue(sL);
+                    databaseReference.child(id).child("zoomLocArray").setValue(ssL);
 
                     Intent intent = new Intent(AccelerometerActivityTest.this, EndOfTest.class);
                     startActivity(intent);
@@ -306,7 +355,7 @@ public class AccelerometerActivityTest extends AppCompatActivity {
                 if (counter > 0) {
                     counter--;
                 }
-                nb.setText((currentImage + 1) + "/28");
+                nb.setText((currentImage + 1) + "/20");
             }
         });
 
@@ -354,7 +403,12 @@ public class AccelerometerActivityTest extends AppCompatActivity {
         image.invalidate();
         image.drawRect = true;
 
+        zoomLocArray.append(randomX);
+        zoomLocArray.append("$");
+        zoomLocArray.append(randomY);
         locZoom = locZoom + Math.abs(randomX) + Math.abs(randomY);
+        databaseReference.child(id).child("zoomLocArrayX").child(String.valueOf(20-testCounter)).setValue(String.valueOf(randomX));
+        databaseReference.child(id).child("zoomLocArrayY").child(String.valueOf(20-testCounter)).setValue(String.valueOf(randomY));
     }
 
     private void randomSquareZero() {
