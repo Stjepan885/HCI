@@ -67,7 +67,7 @@ public class AccelerometerActivityTest extends AppCompatActivity {
 
     private int imageCenterWidth, imageCenterHeight;
 
-    private int step = 100;
+    private int step = 200;
 
     private int locSwipe = 0, locZoom = 0;
 
