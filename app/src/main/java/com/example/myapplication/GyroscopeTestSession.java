@@ -60,7 +60,7 @@ public class GyroscopeTestSession extends AppCompatActivity {
 
     private int imageCenterWidth, imageCenterHeight;
 
-    private int step = 100;
+    private int step = 200;
 
     private int locSwipe = 0, locZoom = 0;
 
@@ -70,6 +70,8 @@ public class GyroscopeTestSession extends AppCompatActivity {
     StringBuilder zoomLocArray = new StringBuilder();
 
     public String id;
+
+    private int imageCounterError = 0, zoomCounter = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -137,6 +139,7 @@ public class GyroscopeTestSession extends AppCompatActivity {
                         databaseReference.child(id).child("swipeLocArrayG1").child(String.valueOf(20-testCounter)).setValue(loc);
                         swipeLocArray.append(String.valueOf(loc));
                         swipeLocArray.append("#");
+                        imageCounterError = 0;
                     } else if (randomTest == 3) {
                         if (currentImage == randomSwipeNumber) {
                             randomSquare();
@@ -149,6 +152,8 @@ public class GyroscopeTestSession extends AppCompatActivity {
                             swipeTime += diff;
 
                             databaseReference.child(id).child("swipeTimeArrayG1").child(String.valueOf(20-testCounter)).setValue(diff);
+                            databaseReference.child(id).child("imageCounterErrorG").child(String.valueOf(20-testCounter)).setValue(imageCounterError);
+
                             swipeTimeArray.append(String.valueOf(diff));
                             swipeTimeArray.append("#");
                             startTime2 = endTime1;
@@ -178,6 +183,8 @@ public class GyroscopeTestSession extends AppCompatActivity {
                                     zoomTimeArray.append(dif);
                                     zoomTimeArray.append("#");
                                     databaseReference.child(id).child("zoomTimeArrayG1").child(String.valueOf(20-testCounter)).setValue(dif);
+                                    databaseReference.child(id).child("zoomCounterG").child(String.valueOf(20-testCounter)).setValue(zoomCounter);
+                                    zoomCounter = 0;
                                 }
                             }
                         }
@@ -232,15 +239,19 @@ public class GyroscopeTestSession extends AppCompatActivity {
                             if (y >= rotationLine) {
                                 currentImage += 1;
                                 counter = counterDefault;
+                                imageCounterError++;
                             } else if (y <= -rotationLine) {
                                 currentImage -= 1;
                                 counter = counterDefault;
+                                imageCounterError++;
                             } else if (x >= rotationLine) {
                                 currentImage -= 5;
                                 counter = counterDefault;
+                                imageCounterError++;
                             } else if (x <= -rotationLine) {
                                 currentImage += 5;
                                 counter = counterDefault;
+                                imageCounterError++;
                             } else if (z <= -rotationLine) {
                                 mode = 1;
                                 zoomIn();
@@ -269,6 +280,7 @@ public class GyroscopeTestSession extends AppCompatActivity {
                                     zoomIn();
                                 }
                                 counter = counterDefault;
+                                zoomCounter++;
                             } else if (z >= rotationLine) {
                                 zoomOut();
                                 if (image.getScaleY() == defaultImageY) {
@@ -277,22 +289,27 @@ public class GyroscopeTestSession extends AppCompatActivity {
                                     mode = 0;
                                 }
                                 counter = counterDefault;
+                                zoomCounter++;
                             } else if (y >= rotationLine) {
 
                                 image.setX(image.getX() - step);
 
                                 counter = counterDefault;
+                                zoomCounter++;
                             } else if (y <= -rotationLine) {
 
                                 image.setX(image.getX() + step);
 
                                 counter = counterDefault;
+                                zoomCounter++;
                             } else if (x >= rotationLine) {
                                 counter = counterDefault;
                                 image.setY(image.getY() - step);
+                                zoomCounter++;
                             } else if (x <= -rotationLine) {
                                 counter = counterDefault;
                                 image.setY(image.getY() + step);
+                                zoomCounter++;
                             }
 
                         }
