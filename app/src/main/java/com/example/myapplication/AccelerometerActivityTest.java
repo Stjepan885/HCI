@@ -78,6 +78,8 @@ public class AccelerometerActivityTest extends AppCompatActivity {
 
     public String id;
 
+    private int imageCounterError = 0, zoomCounter = 0;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -118,6 +120,8 @@ public class AccelerometerActivityTest extends AppCompatActivity {
         prefs = getSharedPreferences("shared_pref_name", Context.MODE_PRIVATE);
         id = prefs.getString("id", null);
 
+
+
         accelerometer.setListener(new Accelerometer.Listener() {
             @Override
             public void onTranslation(float x, float y, float z) {
@@ -140,6 +144,7 @@ public class AccelerometerActivityTest extends AppCompatActivity {
                         databaseReference.child(id).child("swipeLocArray1").child(String.valueOf(20-testCounter)).setValue(loc);
                         swipeLocArray.append(String.valueOf(loc));
                         swipeLocArray.append("#");
+                        imageCounterError = 0;
                     } else if (randomTest == 3) {
                         if (currentImage == randomSwipeNumber) {
                             randomSquare();
@@ -154,6 +159,8 @@ public class AccelerometerActivityTest extends AppCompatActivity {
                             swipeTimeArray.append("#");
                             startTime2 = endTime1;
                             databaseReference.child(id).child("swipeTimeArray1").child(String.valueOf(20-testCounter)).setValue(diff);
+                            databaseReference.child(id).child("imageCounterError").child(String.valueOf(20-testCounter)).setValue(imageCounterError);
+
                         }
                     } else if (randomTest == 4) {
                         if (squareImage != currentImage) {
@@ -180,6 +187,8 @@ public class AccelerometerActivityTest extends AppCompatActivity {
                                     zoomTimeArray.append(dif);
                                     zoomTimeArray.append("#");
                                     databaseReference.child(id).child("zoomTimeArray1").child(String.valueOf(20-testCounter)).setValue(dif);
+                                    databaseReference.child(id).child("zoomCounter").child(String.valueOf(20-testCounter)).setValue(zoomCounter);
+                                    zoomCounter = 0;
                                 }
                             }
                         }
@@ -251,43 +260,49 @@ public class AccelerometerActivityTest extends AppCompatActivity {
                 accSumY = accSumY - (accSumY * 0.2f);
                 accSumZ = accSumZ - (accSumZ * 0.2f);
 
+                float acc = (Math.abs(accSumX) + Math.abs(accSumY) + Math.abs(accSumZ))/3;
+
                 switch (mode) {
                     case 0:
 
-                        if (accSumZ >= 2 && counterTwo == 0) {
+                        if (accSumZ >= 2 && counterTwo == 0 && Math.abs(accSumZ) >= acc) {
                             counter = counterDefault;
                             set = false;
                             mode = 1;
                             counterTwo = counterTwoDefault;
                             zoomIn();
-                        } else if (accSumX >= 1.3f && counterTwo == 0) {
+                        } else if (accSumX >= 1.5f && counterTwo == 0 && Math.abs(accSumX) >= acc) {
                             currentImage -= 1;
                             counter = counterDefault;
                             set = false;
                             counterTwo = counterTwoDefault;
-                        } else if (accSumX <= -1.3f && counterTwo == 0) {
+                            imageCounterError++;
+                        } else if (accSumX <= -1.5f && counterTwo == 0 && Math.abs(accSumX) >= acc) {
                             currentImage += 1;
                             counter = counterDefault;
                             set = false;
                             counterTwo = counterTwoDefault;
-                        } else if (accSumY >= 1.3f && counterTwo == 0) {
+                            imageCounterError++;
+                        } else if (accSumY >= 1.5f && counterTwo == 0 && Math.abs(accSumY) >= acc) {
                             currentImage -= 5;
                             counter = counterDefault;
                             set = false;
                             counterTwo = counterTwoDefault;
-                        } else if (accSumY <= -1.3f && counterTwo == 0) {
+                            imageCounterError++;
+                        } else if (accSumY <= -1.5f && counterTwo == 0 && Math.abs(accSumY) >= acc) {
                             currentImage += 5;
                             counter = counterDefault;
                             set = false;
                             counterTwo = counterTwoDefault;
+                            imageCounterError++;
                         } else {
                             mode = 0;
                         }
 
                         if (currentImage < 0) {
                             currentImage = 0;
-                        } else if (currentImage > 27) {
-                            currentImage = 27;
+                        } else if (currentImage > 19) {
+                            currentImage = 19;
                         }
                         image.setImageResource(images[currentImage]);
                         break;
@@ -300,6 +315,7 @@ public class AccelerometerActivityTest extends AppCompatActivity {
                             if (image.getScaleX() < 5f) {
                                 zoomIn();
                             }
+                            zoomCounter++;
                         } else if (accSumZ <= -2 && counterTwo == 0) {
                             zoomOut();
                             if (image.getScaleY() == defaultScaleImageY) {
@@ -310,26 +326,31 @@ public class AccelerometerActivityTest extends AppCompatActivity {
                             counter = counterDefault;
                             set = false;
                             counterTwo = counterTwoDefault;
+                            zoomCounter++;
                         } else if (accSumX >= 1.5f && counterTwo == 0) {
                             image.setX(image.getX() + step);
                             counter = counterDefault;
                             set = false;
                             counterTwo = counterTwoDefault;
+                            zoomCounter++;
                         } else if (accSumX <= -1.5f && counterTwo == 0) {
                             image.setX(image.getX() - step);
                             counter = counterDefault;
                             set = false;
                             counterTwo = counterTwoDefault;
+                            zoomCounter++;
                         } else if (accSumY >= 1.5f && counterTwo == 0) {
                             image.setY(image.getY() - step);
                             counter = counterDefault;
                             set = false;
                             counterTwo = counterTwoDefault;
+                            zoomCounter++;
                         } else if (accSumY <= -1.5f && counterTwo == 0) {
                             image.setY(image.getY() + step);
                             counter = counterDefault;
                             set = false;
                             counterTwo = counterTwoDefault;
+                            zoomCounter++;
                         }
                         if (counter > 0) {
                             counter--;
