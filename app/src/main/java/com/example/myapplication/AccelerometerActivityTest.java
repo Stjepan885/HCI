@@ -49,10 +49,11 @@ public class AccelerometerActivityTest extends AppCompatActivity {
     private int currentImage = 0, squareImage;
     private int mode = 0; // 0 - swipe 1 - zoom
 
-    private final int counterDefault = 20;
+    private final int counterDefault = 15;
     private int counterTwoDefault = 2;
-    private int counter = 10, zCounter = 10, counterTwo = 2;
-    private int testCounter = 20;
+    private int counter = counterDefault, zCounter = 10, counterTwo = 2;
+    private int testCounterDefault = 20;
+    private int testCounter = testCounterDefault;
     private int randomTest = 0, randomSwipeNumber;
 
 
@@ -77,6 +78,11 @@ public class AccelerometerActivityTest extends AppCompatActivity {
     StringBuilder zoomLocArray = new StringBuilder();
 
     public String id;
+
+    private int imageCounterError = 0, zoomCounter = 0;
+
+    private long tmpLoadingStart, tmpLoadingEnd, tmpLoading;
+    private boolean loading = true;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -115,12 +121,26 @@ public class AccelerometerActivityTest extends AppCompatActivity {
         zoomTimeArray.append("#");
         zoomLocArray.append("#");
 
+        start();
+
         prefs = getSharedPreferences("shared_pref_name", Context.MODE_PRIVATE);
         id = prefs.getString("id", null);
 
         accelerometer.setListener(new Accelerometer.Listener() {
             @Override
             public void onTranslation(float x, float y, float z) {
+
+                if (counter == counterDefault - 1) {
+                    tmpLoadingStart = System.currentTimeMillis();
+                    loading = true;
+                }
+
+                if (counter == 0 && loading == true) {
+                    tmpLoadingEnd = System.currentTimeMillis() - tmpLoadingStart;
+                    Log.e("time", "" + tmpLoadingEnd);
+                    tmpLoading += tmpLoadingEnd;
+                    loading = false;
+                }
 
                 if (testCounter != 0) {
                     if (randomTest == 0) {
@@ -130,32 +150,37 @@ public class AccelerometerActivityTest extends AppCompatActivity {
                         startTime1 = System.currentTimeMillis();
 
                         int loc;
-                        if (randomSwipeNumber > currentImage){
+                        if (randomSwipeNumber > currentImage) {
                             loc = randomSwipeNumber - currentImage;
-                        }else{
+                        } else {
                             loc = currentImage - randomSwipeNumber;
                         }
 
                         locSwipe = locSwipe + loc;
-                        databaseReference.child(id).child("swipeLocArray1").child(String.valueOf(20-testCounter)).setValue(loc);
+                        databaseReference.child(id).child("swipeLocArray1").child(String.valueOf(testCounterDefault - testCounter)).setValue(loc);
                         swipeLocArray.append(String.valueOf(loc));
                         swipeLocArray.append("#");
+                        imageCounterError = 0;
                     } else if (randomTest == 3) {
+
                         if (currentImage == randomSwipeNumber) {
                             randomSquare();
                             squareImage = currentImage;
                             randomTest = 4;
                             mode = 2;
                             endTime1 = System.currentTimeMillis();
-                            long diff = endTime1 - startTime1 - 730;
+                            long diff = endTime1 - startTime1 - (tmpLoading);
+                            Log.e("tmp loading", " " + tmpLoading);
+                            tmpLoading = 0;
                             swipeTime += diff;
-                            diff = diff /100;
+                            diff = diff / 100;
                             swipeTimeArray.append(diff);
                             swipeTimeArray.append("#");
                             startTime2 = endTime1;
-                            databaseReference.child(id).child("swipeTimeArray1").child(String.valueOf(20-testCounter)).setValue(diff);
+                            databaseReference.child(id).child("swipeTimeArray1").child(String.valueOf(testCounterDefault - testCounter)).setValue(diff);
                         }
                     } else if (randomTest == 4) {
+
                         if (squareImage != currentImage) {
                             randomTest = 5;
                             randomSquareZero();
@@ -171,15 +196,20 @@ public class AccelerometerActivityTest extends AppCompatActivity {
                                     randomSquareZero();
                                     randomTest = 0;
                                     mode = 0;
-                                    testCounter--;
-                                    testsDone.setText((20 - testCounter) + "/20");
                                     endTime2 = System.currentTimeMillis();
-                                    long dif = endTime2 - startTime2 - 730;
+                                    long dif = endTime2 - startTime2 - (tmpLoading);
+                                    Log.e("tmp loading", " " + tmpLoading);
+                                    tmpLoading = 0;
                                     zoomTime += dif;
                                     dif = dif / 100;
                                     zoomTimeArray.append(dif);
                                     zoomTimeArray.append("#");
-                                    databaseReference.child(id).child("zoomTimeArray1").child(String.valueOf(20-testCounter)).setValue(dif);
+                                    databaseReference.child(id).child("zoomTimeArray1").child(String.valueOf(testCounterDefault - testCounter)).setValue(dif);
+                                    databaseReference.child(id).child("imageCounterError").child(String.valueOf(testCounterDefault - testCounter)).setValue(imageCounterError);
+                                    databaseReference.child(id).child("zoomCounter").child(String.valueOf(20 - testCounter)).setValue(zoomCounter);
+                                    zoomCounter = 0;
+                                    testCounter--;
+                                    testsDone.setText((testCounterDefault - testCounter) + "/20");
                                 }
                             }
                         }
@@ -190,43 +220,7 @@ public class AccelerometerActivityTest extends AppCompatActivity {
                         }
                     }
                 } else {
-                    //end of test
-
-                    prefs = getSharedPreferences("shared_pref_name", Context.MODE_PRIVATE);
-
-                    SharedPreferences.Editor editor = prefs.edit();
-                    editor.putLong("swipe", swipeTime);
-                    editor.putLong("zoom", zoomTime);
-                    editor.apply();
-
-                    String id = prefs.getString("id", null);
-
-                    String swipe = String.valueOf(swipeTime);
-                    String zoom = String.valueOf(zoomTime);
-
-                    databaseReference.child(id).child("swipeTime").setValue(swipe);
-                    databaseReference.child(id).child("zoomTime").setValue(zoom);
-
-                    databaseReference.child(id).child("locSwipe").setValue(locSwipe);
-                    databaseReference.child(id).child("locZoom").setValue(locZoom);
-
-                    swipeLocArray.append("%");
-                    swipeTimeArray.append("%");
-                    zoomLocArray.append("%");
-                    zoomTimeArray.append("%");
-
-                    String s = swipeTimeArray.toString();
-                    String ss = swipeLocArray.toString();
-                    databaseReference.child(id).child("swipeTimeArray").setValue(s);
-                    databaseReference.child(id).child("swipeLocArray").setValue(ss);
-
-                    String sL = zoomTimeArray.toString();
-                    String ssL = zoomLocArray.toString();
-                    databaseReference.child(id).child("zoomTimeArray").setValue(sL);
-                    databaseReference.child(id).child("zoomLocArray").setValue(ssL);
-
-                    Intent intent = new Intent(AccelerometerActivityTest.this, EndOfTest.class);
-                    startActivity(intent);
+                    end();
                 }
 
                 if (counterTwo > 0 && set == true) {
@@ -251,43 +245,49 @@ public class AccelerometerActivityTest extends AppCompatActivity {
                 accSumY = accSumY - (accSumY * 0.2f);
                 accSumZ = accSumZ - (accSumZ * 0.2f);
 
+                float acc = (Math.abs(accSumX) + Math.abs(accSumY) + Math.abs(accSumZ)) / 3;
+
                 switch (mode) {
                     case 0:
 
-                        if (accSumZ >= 2 && counterTwo == 0) {
+                        if (accSumZ >= 2 && counterTwo == 0 && Math.abs(accSumZ) >= acc) {
                             counter = counterDefault;
                             set = false;
                             mode = 1;
                             counterTwo = counterTwoDefault;
                             zoomIn();
-                        } else if (accSumX >= 1.3f && counterTwo == 0) {
+                        } else if (accSumX >= 1.3f && counterTwo == 0 && Math.abs(accSumX) >= acc) {
                             currentImage -= 1;
                             counter = counterDefault;
                             set = false;
                             counterTwo = counterTwoDefault;
-                        } else if (accSumX <= -1.3f && counterTwo == 0) {
+                            imageCounterError++;
+                        } else if (accSumX <= -1.3f && counterTwo == 0 && Math.abs(accSumX) >= acc) {
                             currentImage += 1;
                             counter = counterDefault;
                             set = false;
                             counterTwo = counterTwoDefault;
-                        } else if (accSumY >= 1.3f && counterTwo == 0) {
+                            imageCounterError++;
+                        } else if (accSumY >= 1.3f && counterTwo == 0 && Math.abs(accSumY) >= acc) {
                             currentImage -= 5;
                             counter = counterDefault;
                             set = false;
                             counterTwo = counterTwoDefault;
-                        } else if (accSumY <= -1.3f && counterTwo == 0) {
+                            imageCounterError++;
+                        } else if (accSumY <= -1.3f && counterTwo == 0 && Math.abs(accSumY) >= acc) {
                             currentImage += 5;
                             counter = counterDefault;
                             set = false;
                             counterTwo = counterTwoDefault;
+                            imageCounterError++;
                         } else {
                             mode = 0;
                         }
 
                         if (currentImage < 0) {
                             currentImage = 0;
-                        } else if (currentImage > 27) {
-                            currentImage = 27;
+                        } else if (currentImage > 19) {
+                            currentImage = 19;
                         }
                         image.setImageResource(images[currentImage]);
                         break;
@@ -300,6 +300,7 @@ public class AccelerometerActivityTest extends AppCompatActivity {
                             if (image.getScaleX() < 5f) {
                                 zoomIn();
                             }
+                            zoomCounter++;
                         } else if (accSumZ <= -2 && counterTwo == 0) {
                             zoomOut();
                             if (image.getScaleY() == defaultScaleImageY) {
@@ -310,30 +311,33 @@ public class AccelerometerActivityTest extends AppCompatActivity {
                             counter = counterDefault;
                             set = false;
                             counterTwo = counterTwoDefault;
+                            zoomCounter++;
                         } else if (accSumX >= 1.5f && counterTwo == 0) {
                             image.setX(image.getX() + step);
                             counter = counterDefault;
                             set = false;
                             counterTwo = counterTwoDefault;
+                            zoomCounter++;
                         } else if (accSumX <= -1.5f && counterTwo == 0) {
                             image.setX(image.getX() - step);
                             counter = counterDefault;
                             set = false;
                             counterTwo = counterTwoDefault;
+                            zoomCounter++;
                         } else if (accSumY >= 1.5f && counterTwo == 0) {
                             image.setY(image.getY() - step);
                             counter = counterDefault;
                             set = false;
                             counterTwo = counterTwoDefault;
+                            zoomCounter++;
                         } else if (accSumY <= -1.5f && counterTwo == 0) {
                             image.setY(image.getY() + step);
                             counter = counterDefault;
                             set = false;
                             counterTwo = counterTwoDefault;
+                            zoomCounter++;
                         }
-                        if (counter > 0) {
-                            counter--;
-                        }
+
                         break;
                     case 2:
                         if (accSumZ >= 2 && counterTwo == 0) {
@@ -383,7 +387,7 @@ public class AccelerometerActivityTest extends AppCompatActivity {
 
     private void randomSquare() {
         randomX = ThreadLocalRandom.current().nextInt(-3, 2);
-        randomY = ThreadLocalRandom.current().nextInt(-3, 2);
+        randomY = ThreadLocalRandom.current().nextInt(-2, 1);
 
         imageLeft = screenWidth / 2 + (screenWidth / 8) * (randomX);
         imageRight = screenWidth / 2 + (screenWidth / 8) * (randomX + 2);
@@ -407,8 +411,8 @@ public class AccelerometerActivityTest extends AppCompatActivity {
         zoomLocArray.append("$");
         zoomLocArray.append(randomY);
         locZoom = locZoom + Math.abs(randomX) + Math.abs(randomY);
-        databaseReference.child(id).child("zoomLocArrayX").child(String.valueOf(20-testCounter)).setValue(String.valueOf(randomX));
-        databaseReference.child(id).child("zoomLocArrayY").child(String.valueOf(20-testCounter)).setValue(String.valueOf(randomY));
+        databaseReference.child(id).child("zoomLocArrayX").child(String.valueOf(testCounterDefault - testCounter)).setValue(String.valueOf(randomX));
+        databaseReference.child(id).child("zoomLocArrayY").child(String.valueOf(testCounterDefault - testCounter)).setValue(String.valueOf(randomY));
     }
 
     private void randomSquareZero() {
@@ -488,17 +492,165 @@ public class AccelerometerActivityTest extends AppCompatActivity {
         }
     }
 
-    @Override
-    protected void onResume() {
-        super.onResume();
-        accelerometer.register();
+    private void start() {
+        prefs = getSharedPreferences("shared_pref_name", Context.MODE_PRIVATE);
 
+        testCounter = prefs.getInt("testCounter", testCounterDefault);
+
+        currentImage = prefs.getInt("currentImage", 0);
+        image.setImageResource(images[currentImage]);
+
+        squareImage = prefs.getInt("squareImage", 50);
+        if (squareImage == currentImage) {
+            randomX = prefs.getInt("randomX", 0);
+            randomY = prefs.getInt("randomY", 0);
+            //randomSquareOld(randomX, randomY);
+        }
+
+        randomSwipeNumber = prefs.getInt("randomSwipeNumber", 0);
+        nbImage.setText(" " + (randomSwipeNumber + 1));
+        testsDone.setText((testCounterDefault - testCounter) + "/20");
+
+        swipeTime = prefs.getLong("swipe", 0);
+        zoomTime = prefs.getLong("zoom", 0);
+
+        randomTest = prefs.getInt("randomTest", 0);
+
+        if (testCounter == 0) {
+            Log.e("bok", "bok" + testCounter);
+            finish();
+        } else if (testCounter == testCounterDefault) {
+            return;
+        }
+
+        int rndTest = prefs.getInt("randomTest", 0);
+
+        if (rndTest == 0) {
+            randomTest = 0;
+            return;
+        }
+
+        swipeTimeArray.setLength(0);
+        swipeTimeArray.append(prefs.getString("swipeTimeArray", "#"));
+        swipeLocArray.setLength(0);
+        swipeLocArray.append(prefs.getString("swipeLocArray", "#"));
+        zoomTimeArray.setLength(0);
+        zoomTimeArray.append(prefs.getString("zoomTimeArray", "#"));
+        zoomLocArray.setLength(0);
+        zoomLocArray.append(prefs.getString("zoomLocArray", "#"));
+
+
+        if (rndTest == 3) {
+            randomTest = 3;
+            startTime1 = System.currentTimeMillis();
+            return;
+        } else if (rndTest == 4) {
+            randomTest = 4;
+            if (squareImage == currentImage) {
+                randomX = prefs.getInt("randomX", 0);
+                randomY = prefs.getInt("randomY", 0);
+                randomSquareOld(randomX, randomY);
+            }
+            startTime2 = System.currentTimeMillis();
+        }
+    }
+
+    private void end1() {
+        prefs = getSharedPreferences("shared_pref_name", Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = prefs.edit();
+
+        editor.putInt("currentImage", currentImage);
+        editor.putInt("randomTest", randomTest);
+        editor.putInt("randomSwipeNumber", randomSwipeNumber);
+        editor.putInt("squareImage", squareImage);
+        editor.putInt("testCounter", testCounter);
+        editor.putInt("randomX", randomX);
+        editor.putInt("randomY", randomY);
+
+        editor.putLong("swipe", swipeTime);
+        editor.putLong("zoom", zoomTime);
+
+
+        String s = swipeTimeArray.toString();
+        String ss = swipeLocArray.toString();
+
+        String sL = zoomTimeArray.toString();
+        String ssL = zoomLocArray.toString();
+
+        editor.putString("swipeTimeArray", s);
+        editor.putString("swipeLocArray", ss);
+        editor.putString("zoomTimeArray", sL);
+        editor.putString("zoomLocArray", ssL);
+        editor.apply();
+
+        //end of test
+        finish();
+    }
+
+    private void end() {
+        prefs = getSharedPreferences("shared_pref_name", Context.MODE_PRIVATE);
+
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putLong("swipe", swipeTime);
+        editor.putLong("zoom", zoomTime);
+        editor.putInt("testCounter", testCounter);
+        editor.apply();
+
+        String id = prefs.getString("id", null);
+
+        String swipe = String.valueOf(swipeTime);
+        String zoom = String.valueOf(zoomTime);
+
+        databaseReference.child(id).child("swipeTime").setValue(swipe);
+        databaseReference.child(id).child("zoomTime").setValue(zoom);
+
+        swipeLocArray.append("%");
+        swipeTimeArray.append("%");
+        zoomLocArray.append("%");
+        zoomTimeArray.append("%");
+
+        databaseReference.child(id).child("locSwipe").setValue(locSwipe);
+        databaseReference.child(id).child("locZoom").setValue(locZoom);
+
+        String s = swipeTimeArray.toString();
+        String ss = swipeLocArray.toString();
+        databaseReference.child(id).child("swipeTimeArray").setValue(s);
+        databaseReference.child(id).child("swipeLocArray").setValue(ss);
+
+        String sL = zoomTimeArray.toString();
+        String ssL = zoomLocArray.toString();
+        databaseReference.child(id).child("zoomTimeArray").setValue(sL);
+        databaseReference.child(id).child("zoomLocArray").setValue(ssL);
+
+        //end of test
+        Intent intent = new Intent(AccelerometerActivityTest.this, EndOfTest.class);
+        startActivity(intent);
     }
 
     @Override
-    protected void onPause() {
-        super.onPause();
-        accelerometer.unregister();
+    public void onBackPressed() {
+        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
+        alertDialogBuilder.setTitle("Exit Session?");
+        alertDialogBuilder
+                .setMessage("Click yes to exit!")
+                .setCancelable(false)
+                .setPositiveButton("Yes",
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                end1();
+                                finish();
+                            }
+                        })
+
+                .setNegativeButton("No", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+
+                        dialog.cancel();
+                    }
+                });
+
+        AlertDialog alertDialog = alertDialogBuilder.create();
+        alertDialog.show();
     }
 
     @Override
@@ -517,27 +669,15 @@ public class AccelerometerActivityTest extends AppCompatActivity {
     }
 
     @Override
-    public void onBackPressed() {
-        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
-        alertDialogBuilder.setTitle("Exit Session?");
-        alertDialogBuilder
-                .setMessage("Click yes to exit!")
-                .setCancelable(false)
-                .setPositiveButton("Yes",
-                        new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int id) {
-                                finish();
-                            }
-                        })
+    protected void onResume() {
+        super.onResume();
+        accelerometer.register();
 
-                .setNegativeButton("No", new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
+    }
 
-                        dialog.cancel();
-                    }
-                });
-
-        AlertDialog alertDialog = alertDialogBuilder.create();
-        alertDialog.show();
+    @Override
+    protected void onPause() {
+        super.onPause();
+        accelerometer.unregister();
     }
 }

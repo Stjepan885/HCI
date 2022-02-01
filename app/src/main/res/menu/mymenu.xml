@@ -8,5 +8,9 @@
         android:title="action_favorite"
         app:showAsAction="ifRoom"/>
 
+    <item
+        android:id="@+id/action_reset"
+        android:title="reset"
+        app:showAsAction="ifRoom"/>
 
 </menu>
