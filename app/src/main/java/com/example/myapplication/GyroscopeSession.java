@@ -24,9 +24,6 @@ import java.util.concurrent.ThreadLocalRandom;
 
 public class GyroscopeSession extends AppCompatActivity {
 
-    private long startTime1, startTime2, endTime1, endTime2;
-    private long swipeTime = 0l, zoomTime = 0l;
-
     private Gyroscope gyroscope;
 
     private ProgressBar prog;
@@ -75,7 +72,6 @@ public class GyroscopeSession extends AppCompatActivity {
 
         gyroscope = new Gyroscope(this);
 
-        Button button = (Button) findViewById(R.id.button);
         TextView nb = (TextView) findViewById(R.id.textView2);
         nbImage = (TextView) findViewById(R.id.textView3);
         testsDone = findViewById(R.id.textViewTestDone);
@@ -253,8 +249,6 @@ public class GyroscopeSession extends AppCompatActivity {
         imageCenterWidth = (int) ((imageLeft + imageRight));
         imageCenterHeight = (int) ((imageRight + imageBottom) / 2 - (image.getHeight() / 2));
 
-        Log.e("center ", " x " + imageCenterWidth);
-
         image.left = imageLeft;
         image.top = imageTop;
         image.right = imageRight;
@@ -272,8 +266,6 @@ public class GyroscopeSession extends AppCompatActivity {
 
         imageCenterWidth = (int) ((imageLeft + imageRight));
         imageCenterHeight = (int) ((imageRight + imageBottom) / 2 - (image.getHeight() / 2));
-
-        Log.e("center ", " x " + imageCenterWidth);
 
         image.left = imageLeft;
         image.top = imageTop;

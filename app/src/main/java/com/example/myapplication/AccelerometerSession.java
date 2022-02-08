@@ -24,9 +24,6 @@ import java.util.concurrent.ThreadLocalRandom;
 
 public class AccelerometerSession extends AppCompatActivity {
 
-    private long startTime1, startTime2, endTime1, endTime2;
-    private long swipeTime = 0l, zoomTime = 0l;
-
     private Accelerometer accelerometer;
 
     private ProgressBar prog;
@@ -281,8 +278,6 @@ public class AccelerometerSession extends AppCompatActivity {
         imageCenterWidth = (int) ((imageLeft + imageRight));
         imageCenterHeight = (int) ((imageRight + imageBottom) / 2 - (image.getHeight() / 2));
 
-        Log.e("center ", " x " + imageCenterWidth);
-
         image.left = imageLeft;
         image.top = imageTop;
         image.right = imageRight;
@@ -303,8 +298,6 @@ public class AccelerometerSession extends AppCompatActivity {
 
         imageCenterWidth = (int) ((imageLeft + imageRight));
         imageCenterHeight = (int) ((imageRight + imageBottom) / 2 - (image.getHeight() / 2));
-
-        Log.e("center ", " x " + imageCenterWidth);
 
         image.left = imageLeft;
         image.top = imageTop;

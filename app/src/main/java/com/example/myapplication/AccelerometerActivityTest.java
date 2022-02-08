@@ -137,7 +137,6 @@ public class AccelerometerActivityTest extends AppCompatActivity {
 
                 if (counter == 0 && loading == true) {
                     tmpLoadingEnd = System.currentTimeMillis() - tmpLoadingStart;
-                    Log.e("time", "" + tmpLoadingEnd);
                     tmpLoading += tmpLoadingEnd;
                     loading = false;
                 }
@@ -170,7 +169,6 @@ public class AccelerometerActivityTest extends AppCompatActivity {
                             mode = 2;
                             endTime1 = System.currentTimeMillis();
                             long diff = endTime1 - startTime1 - (tmpLoading);
-                            Log.e("tmp loading", " " + tmpLoading);
                             tmpLoading = 0;
                             swipeTime += diff;
                             diff = diff / 100;
@@ -198,7 +196,6 @@ public class AccelerometerActivityTest extends AppCompatActivity {
                                     mode = 0;
                                     endTime2 = System.currentTimeMillis();
                                     long dif = endTime2 - startTime2 - (tmpLoading);
-                                    Log.e("tmp loading", " " + tmpLoading);
                                     tmpLoading = 0;
                                     zoomTime += dif;
                                     dif = dif / 100;
@@ -374,8 +371,6 @@ public class AccelerometerActivityTest extends AppCompatActivity {
         imageCenterWidth = (int) ((imageLeft + imageRight));
         imageCenterHeight = (int) ((imageRight + imageBottom) / 2 - (image.getHeight() / 2));
 
-        Log.e("center ", " x " + imageCenterWidth);
-
         image.left = imageLeft;
         image.top = imageTop;
         image.right = imageRight;
@@ -396,8 +391,6 @@ public class AccelerometerActivityTest extends AppCompatActivity {
 
         imageCenterWidth = (int) ((imageLeft + imageRight));
         imageCenterHeight = (int) ((imageRight + imageBottom) / 2 - (image.getHeight() / 2));
-
-        Log.e("center ", " x " + imageCenterWidth);
 
         image.left = imageLeft;
         image.top = imageTop;
@@ -517,7 +510,6 @@ public class AccelerometerActivityTest extends AppCompatActivity {
         randomTest = prefs.getInt("randomTest", 0);
 
         if (testCounter == 0) {
-            Log.e("bok", "bok" + testCounter);
             finish();
         } else if (testCounter == testCounterDefault) {
             return;
