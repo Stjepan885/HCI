@@ -120,7 +120,8 @@ public class MainMenu extends AppCompatActivity {
                                     public void onClick(DialogInterface dialog, int id) {
                                         prefs = getSharedPreferences("shared_pref_name", Context.MODE_PRIVATE);
                                         prefs.edit().clear().commit();
-                                        finish();
+                                        Intent intent = new Intent(MainMenu.this, MainActivity.class);
+                                        startActivity(intent);
                                     }
                                 })
 
@@ -135,7 +136,42 @@ public class MainMenu extends AppCompatActivity {
                 alertDialog.show();
 
                 return true;
+            case R.id.action_reset:
+                AlertDialog.Builder alertDialogBuilder1 = new AlertDialog.Builder(this);
+                alertDialogBuilder1.setTitle("Reset?");
+                alertDialogBuilder1
+                        .setMessage("Click yes to reset!")
+                        .setCancelable(false)
+                        .setPositiveButton("Yes",
+                                new DialogInterface.OnClickListener() {
+                                    public void onClick(DialogInterface dialog, int id) {
+                                        prefs = getSharedPreferences("shared_pref_name", Context.MODE_PRIVATE);
+                                        String idd = prefs.getString("id", null);
+                                        String user = prefs.getString("name", null);
+                                        prefs.edit().clear().commit();
+
+                                        prefs = getSharedPreferences("shared_pref_name", Context.MODE_PRIVATE);
+
+                                        SharedPreferences.Editor editor = prefs.edit();
+                                        editor.putString("id", idd);
+                                        editor.putString("name", user);
+                                        editor.apply();
+                                    }
+                                })
+
+                        .setNegativeButton("No", new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+
+                                dialog.cancel();
+                            }
+                        });
+
+                AlertDialog alertDialog1 = alertDialogBuilder1.create();
+                alertDialog1.show();
+
+                return true;
             default:
+
 
                 return super.onOptionsItemSelected(item);
 

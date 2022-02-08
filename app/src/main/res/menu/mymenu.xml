@@ -4,9 +4,12 @@
     <!-- "Mark Favorite", should appear as action button if possible -->
     <item
         android:id="@+id/action_favorite"
-        android:icon="@drawable/user_icon"
-        android:title="action_favorite"
+        android:title="Change user"
         app:showAsAction="ifRoom"/>
 
+    <item
+        android:id="@+id/action_reset"
+        android:title="reset"
+        app:showAsAction="ifRoom"/>
 
 </menu>

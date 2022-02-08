@@ -44,7 +44,7 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Za prelistavanje jedne slike koristi se pomicanje po x-osi mobitela(desno => slika +1, lijevo => slika-1), dok se za prelistavanje pet slika koristi os z (gore => slika+5, dolje => slika-5). "/>
+                android:text="Za prelistavanje jedne slike koristi se pomicanje po x-osi mobitela(desno => slika +1, lijevo => slika-1), dok se za prelistavanje pet slika koristi os y (gore => slika+5, dolje => slika-5). "/>
            <TextView
                android:layout_width="match_parent"
                android:layout_height="wrap_content"
@@ -54,7 +54,7 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Za približavanje slike koristi se os X. (približavanje mobitela prema sebi za zoom+ , udaljavanje mobitela od sebe za zoom-). Kod prvog približavanja, ulazi se u Zoom-mod u kojem je moguće šetati po slici pomoću x i y osi (desno-lijevo, gore-dolje). Pritiskom zaslona moguće je mjenjati veličinu koraka kojim se šeće po slici. Kako bi se izašlo iz Zoom-moda potrebno je udaljiti sliku do originalne veličine."
+                android:text="Za približavanje slike koristi se os z. (približavanje mobitela prema sebi za zoom+ , udaljavanje mobitela od sebe za zoom-). Kod prvog približavanja, ulazi se u Zoom-mod u kojem je moguće šetati po slici pomoću x i y osi (desno-lijevo, gore-dolje). Pritiskom zaslona moguće je mjenjati veličinu koraka kojim se šeće po slici. Kako bi se izašlo iz Zoom-moda potrebno je udaljiti sliku do originalne veličine."
                 />
 
             <Button

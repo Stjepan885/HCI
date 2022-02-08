@@ -48,7 +48,8 @@ public class GyroscopeTestSession extends AppCompatActivity {
     private final int counterDefault = 7;
     private final int rotationLine = 2;
     private int counter = 7;
-    private int testCounter = 20;
+    private int testCounterDefault = 20;
+    private int testCounter = testCounterDefault;
     private int randomTest = 0, randomSwipeNumber;
 
     private float imageX, imageY, defaultImageX, defaultImageY, defaultX, defaultY;
@@ -73,6 +74,12 @@ public class GyroscopeTestSession extends AppCompatActivity {
 
     private int imageCounterError = 0, zoomCounter = 0;
 
+    private long tmpLoadingStart, tmpLoadingEnd, tmpLoading;
+    private boolean loading = true;
+
+    private long jedan, dva;
+    boolean a = true;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -86,13 +93,11 @@ public class GyroscopeTestSession extends AppCompatActivity {
         screenHeight = displayMetrics.heightPixels;
         screenWidth = displayMetrics.widthPixels;
 
-        Log.e("koordinate", "X " + screenHeight + "Y " + screenWidth);
-
         databaseReference = FirebaseDatabase.getInstance().getReference("users");
 
         gyroscope = new Gyroscope(this);
 
-        Button button = (Button) findViewById(R.id.button);
+
         TextView nb = (TextView) findViewById(R.id.textView2);
         nbImage = (TextView) findViewById(R.id.textView3);
         testsDone = findViewById(R.id.textViewTestDone);
@@ -110,17 +115,38 @@ public class GyroscopeTestSession extends AppCompatActivity {
         defaultX = image.getX();
         defaultY = image.getY();
 
+
         swipeTimeArray.append("#");
         swipeLocArray.append("#");
         zoomTimeArray.append("#");
         zoomLocArray.append("#");
 
+        start();
+
         prefs = getSharedPreferences("shared_pref_name", Context.MODE_PRIVATE);
         id = prefs.getString("id", null);
+
+        jedan = System.currentTimeMillis();
+
 
         gyroscope.setListener(new Gyroscope.Listener() {
             @Override
             public void onRotation(float x, float y, float z) {
+
+                if (counter == 0 && a == true){
+                    a = false;
+                }
+
+                if (counter == counterDefault - 1) {
+                    tmpLoadingStart = System.currentTimeMillis();
+                    loading = true;
+                }
+
+                if (counter == 0 && loading == true) {
+                    tmpLoadingEnd = System.currentTimeMillis() - tmpLoadingStart;
+                    tmpLoading += tmpLoadingEnd;
+                    loading = false;
+                }
 
                 if (testCounter != 0) {
                     if (randomTest == 0) {
@@ -136,7 +162,7 @@ public class GyroscopeTestSession extends AppCompatActivity {
                         }
 
                         locSwipe = locSwipe + loc;
-                        databaseReference.child(id).child("swipeLocArrayG1").child(String.valueOf(20-testCounter)).setValue(loc);
+                        databaseReference.child(id).child("swipeLocArrayG1").child(String.valueOf(testCounterDefault-testCounter)).setValue(loc);
                         swipeLocArray.append(String.valueOf(loc));
                         swipeLocArray.append("#");
                         imageCounterError = 0;
@@ -147,13 +173,12 @@ public class GyroscopeTestSession extends AppCompatActivity {
                             randomTest = 4;
                             mode = 2;
                             endTime1 = System.currentTimeMillis();
-                            long diff = endTime1 - startTime1 - 1660;
-                            diff = diff /100;
+                            long diff = endTime1 - startTime1 - (tmpLoading);
+                            tmpLoading = 0;
                             swipeTime += diff;
+                            diff = diff /100;
 
-                            databaseReference.child(id).child("swipeTimeArrayG1").child(String.valueOf(20-testCounter)).setValue(diff);
-                            databaseReference.child(id).child("imageCounterErrorG").child(String.valueOf(20-testCounter)).setValue(imageCounterError);
-
+                            databaseReference.child(id).child("swipeTimeArrayG1").child(String.valueOf(testCounterDefault-testCounter)).setValue(diff);
                             swipeTimeArray.append(String.valueOf(diff));
                             swipeTimeArray.append("#");
                             startTime2 = endTime1;
@@ -174,17 +199,19 @@ public class GyroscopeTestSession extends AppCompatActivity {
                                     randomSquareZero();
                                     randomTest = 0;
                                     mode = 0;
-                                    testCounter--;
-                                    testsDone.setText((20 - testCounter) + "/20");
                                     endTime2 = System.currentTimeMillis();
-                                    long dif = endTime2 - startTime2 - 1660;
-                                    dif = dif / 100;
+                                    long dif = endTime2 - startTime2 - (tmpLoading);
+                                    tmpLoading = 0;
                                     zoomTime += dif;
+                                    dif = dif / 100;
                                     zoomTimeArray.append(dif);
                                     zoomTimeArray.append("#");
-                                    databaseReference.child(id).child("zoomTimeArrayG1").child(String.valueOf(20-testCounter)).setValue(dif);
-                                    databaseReference.child(id).child("zoomCounterG").child(String.valueOf(20-testCounter)).setValue(zoomCounter);
+                                    databaseReference.child(id).child("zoomTimeArrayG1").child(String.valueOf(testCounterDefault-testCounter)).setValue(dif);
+                                    databaseReference.child(id).child("imageCounterErrorG").child(String.valueOf(testCounterDefault - testCounter)).setValue(imageCounterError);
+                                    databaseReference.child(id).child("zoomCounterG").child(String.valueOf(testCounterDefault - testCounter)).setValue(zoomCounter);
                                     zoomCounter = 0;
+                                    testCounter--;
+                                    testsDone.setText((testCounterDefault - testCounter) + "/20");
                                 }
                             }
                         }
@@ -195,42 +222,7 @@ public class GyroscopeTestSession extends AppCompatActivity {
                         }
                     }
                 } else {
-                    prefs = getSharedPreferences("shared_pref_name", Context.MODE_PRIVATE);
-
-                    SharedPreferences.Editor editor = prefs.edit();
-                    editor.putLong("swipeG", swipeTime);
-                    editor.putLong("zoomG", zoomTime);
-                    editor.apply();
-
-                    String id = prefs.getString("id", null);
-
-                    String swipe = String.valueOf(swipeTime);
-                    String zoom = String.valueOf(zoomTime);
-
-                    databaseReference.child(id).child("swipeTimeG").setValue(swipe);
-                    databaseReference.child(id).child("zoomTimeG").setValue(zoom);
-
-                    swipeLocArray.append("%");
-                    swipeTimeArray.append("%");
-                    zoomLocArray.append("%");
-                    zoomTimeArray.append("%");
-
-                    databaseReference.child(id).child("locSwipeG").setValue(locSwipe);
-                    databaseReference.child(id).child("locZoomG").setValue(locZoom);
-
-                    String s = swipeTimeArray.toString();
-                    String ss = swipeLocArray.toString();
-                    databaseReference.child(id).child("swipeTimeArrayG").setValue(s);
-                    databaseReference.child(id).child("swipeLocArrayG").setValue(ss);
-
-                    String sL = zoomTimeArray.toString();
-                    String ssL = zoomLocArray.toString();
-                    databaseReference.child(id).child("zoomTimeArrayG").setValue(sL);
-                    databaseReference.child(id).child("zoomLocArrayG").setValue(ssL);
-
-                    //end of test
-                    Intent intent = new Intent(GyroscopeTestSession.this, EndOfTest.class);
-                    startActivity(intent);
+                    end();
                 }
 
                 switch (mode) {
@@ -291,15 +283,11 @@ public class GyroscopeTestSession extends AppCompatActivity {
                                 counter = counterDefault;
                                 zoomCounter++;
                             } else if (y >= rotationLine) {
-
                                 image.setX(image.getX() - step);
-
                                 counter = counterDefault;
                                 zoomCounter++;
                             } else if (y <= -rotationLine) {
-
                                 image.setX(image.getX() + step);
-
                                 counter = counterDefault;
                                 zoomCounter++;
                             } else if (x >= rotationLine) {
@@ -345,7 +333,7 @@ public class GyroscopeTestSession extends AppCompatActivity {
 
     private void randomSquare() {
         randomX = ThreadLocalRandom.current().nextInt(-3, 2);
-        randomY = ThreadLocalRandom.current().nextInt(-3, 2);
+        randomY = ThreadLocalRandom.current().nextInt(-2, 1);
 
         imageLeft = screenWidth / 2 + (screenWidth / 8) * (randomX);
         imageRight = screenWidth / 2 + (screenWidth / 8) * (randomX + 2);
@@ -354,8 +342,6 @@ public class GyroscopeTestSession extends AppCompatActivity {
 
         imageCenterWidth = (int) ((imageLeft + imageRight));
         imageCenterHeight = (int) ((imageRight + imageBottom) / 2 - (image.getHeight() / 2));
-
-        Log.e("center ", " x " + imageCenterWidth);
 
         image.left = imageLeft;
         image.top = imageTop;
@@ -370,8 +356,8 @@ public class GyroscopeTestSession extends AppCompatActivity {
         zoomLocArray.append(randomY);
         zoomLocArray.append("#");
         locZoom = locZoom + Math.abs(randomX) + Math.abs(randomY);
-        databaseReference.child(id).child("zoomLocArrayGX").child(String.valueOf(20-testCounter)).setValue(String.valueOf(randomX));
-        databaseReference.child(id).child("zoomLocArrayGY").child(String.valueOf(20-testCounter)).setValue(String.valueOf(randomY));
+        databaseReference.child(id).child("zoomLocArrayGX").child(String.valueOf(testCounterDefault-testCounter)).setValue(String.valueOf(randomX));
+        databaseReference.child(id).child("zoomLocArrayGY").child(String.valueOf(testCounterDefault-testCounter)).setValue(String.valueOf(randomY));
     }
 
     private void randomSquareOld(int randomX, int randomY) {
@@ -382,8 +368,6 @@ public class GyroscopeTestSession extends AppCompatActivity {
 
         imageCenterWidth = (int) ((imageLeft + imageRight));
         imageCenterHeight = (int) ((imageRight + imageBottom) / 2 - (image.getHeight() / 2));
-
-        Log.e("center ", " x " + imageCenterWidth);
 
         image.left = imageLeft;
         image.top = imageTop;
@@ -473,19 +457,6 @@ public class GyroscopeTestSession extends AppCompatActivity {
     }
 
     @Override
-    protected void onResume() {
-        super.onResume();
-        gyroscope.register();
-
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-        gyroscope.unregister();
-    }
-
-    @Override
     public boolean onTouchEvent(MotionEvent event) {
         int eventaction = event.getAction();
 
@@ -500,6 +471,143 @@ public class GyroscopeTestSession extends AppCompatActivity {
         return super.onTouchEvent(event);
     }
 
+    private void start(){
+        prefs = getSharedPreferences("shared_pref_name", Context.MODE_PRIVATE);
+
+        testCounter = prefs.getInt("testCounterG", testCounterDefault);
+
+        currentImage = prefs.getInt("currentImageG", 0);
+        image.setImageResource(images[currentImage]);
+
+        squareImage = prefs.getInt("squareImageG", 50);
+        if (squareImage == currentImage){
+            randomX = prefs.getInt("randomXG", 0);
+            randomY = prefs.getInt("randomYG", 0);
+           // randomSquareOld(randomX, randomY);
+        }
+
+        randomSwipeNumber = prefs.getInt("randomSwipeNumberG",0);
+        nbImage.setText(" " + (randomSwipeNumber + 1));
+        testsDone.setText((testCounterDefault - testCounter) + "/20");
+
+        swipeTime = prefs.getLong("swipeG", 0);
+        zoomTime = prefs.getLong("zoomG", 0);
+
+        randomTest = prefs.getInt("randomTestG", 0);
+
+        if (testCounter == 0){
+            finish();
+        }else if (testCounter == testCounterDefault){
+            return;
+        }
+
+        int rndTest = prefs.getInt("randomTestG", 0);
+
+        if (rndTest == 0){
+            randomTest = 0;
+            return;
+        }
+
+        swipeTimeArray.setLength(0);
+        swipeTimeArray.append(prefs.getString("swipeTimeArrayG", "#"));
+        swipeLocArray.setLength(0);
+        swipeLocArray.append(prefs.getString("swipeLocArrayG", "#"));
+        zoomTimeArray.setLength(0);
+        zoomTimeArray.append(prefs.getString("zoomTimeArrayG", "#"));
+        zoomLocArray.setLength(0);
+        zoomLocArray.append(prefs.getString("zoomLocArrayG", "#"));
+
+
+        if (rndTest == 3){
+            randomTest = 3;
+            startTime1 = System.currentTimeMillis();
+            return;
+        }else if (rndTest == 4){
+            randomTest = 4;
+            if (squareImage == currentImage){
+                randomX = prefs.getInt("randomXG", 0);
+                randomY = prefs.getInt("randomYG", 0);
+                randomSquareOld(randomX, randomY);
+            }
+            startTime2 = System.currentTimeMillis();
+        }
+    }
+
+    private void end1() {
+        prefs = getSharedPreferences("shared_pref_name", Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = prefs.edit();
+
+        editor.putInt("randomTestG", randomTest);
+        editor.putInt("randomSwipeNumberG", randomSwipeNumber);
+        editor.putInt("squareImageG", squareImage);
+        editor.putInt("currentImageG", currentImage);
+        editor.putInt("testCounterG", testCounter);
+        editor.putInt("randomXG", randomX);
+        editor.putInt("randomYG", randomY);
+
+        editor.putLong("swipeG", swipeTime);
+        editor.putLong("zoomG", zoomTime);
+
+
+        String s = swipeTimeArray.toString();
+        String ss = swipeLocArray.toString();
+
+        String sL = zoomTimeArray.toString();
+        String ssL = zoomLocArray.toString();
+
+        editor.putString("swipeTimeArrayG", s);
+        editor.putString("swipeLocArrayG", ss);
+        editor.putString("zoomTimeArrayG", sL);
+        editor.putString("zoomLocArrayG", ssL);
+
+
+        editor.apply();
+
+
+        //end of test
+        finish();
+    }
+
+    private void end() {
+        prefs = getSharedPreferences("shared_pref_name", Context.MODE_PRIVATE);
+
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putLong("swipeG", swipeTime);
+        editor.putLong("zoomG", zoomTime);
+        editor.putInt("testCounter", testCounter);
+        editor.apply();
+
+        String id = prefs.getString("id", null);
+
+        String swipe = String.valueOf(swipeTime);
+        String zoom = String.valueOf(zoomTime);
+
+        databaseReference.child(id).child("swipeTimeG").setValue(swipe);
+        databaseReference.child(id).child("zoomTimeG").setValue(zoom);
+
+        swipeLocArray.append("%");
+        swipeTimeArray.append("%");
+        zoomLocArray.append("%");
+        zoomTimeArray.append("%");
+
+        databaseReference.child(id).child("locSwipeG").setValue(locSwipe);
+        databaseReference.child(id).child("locZoomG").setValue(locZoom);
+
+        String s = swipeTimeArray.toString();
+        String ss = swipeLocArray.toString();
+        databaseReference.child(id).child("swipeTimeArrayG").setValue(s);
+        databaseReference.child(id).child("swipeLocArrayG").setValue(ss);
+
+        String sL = zoomTimeArray.toString();
+        String ssL = zoomLocArray.toString();
+        databaseReference.child(id).child("zoomTimeArrayG").setValue(sL);
+        databaseReference.child(id).child("zoomLocArrayG").setValue(ssL);
+
+        //end of test
+        Intent intent = new Intent(GyroscopeTestSession.this, EndOfTest.class);
+        startActivity(intent);
+    }
+
     @Override
     public void onBackPressed() {
         AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
@@ -510,6 +618,8 @@ public class GyroscopeTestSession extends AppCompatActivity {
                 .setPositiveButton("Yes",
                         new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int id) {
+                                end1();
+
                                 finish();
                             }
                         })
@@ -525,4 +635,16 @@ public class GyroscopeTestSession extends AppCompatActivity {
         alertDialog.show();
     }
 
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        gyroscope.register();
+
+    }
+    @Override
+    protected void onPause() {
+        super.onPause();
+        gyroscope.unregister();
+    }
 }
