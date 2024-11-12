@@ -1,0 +1,10 @@
+<h1>Gallery Navigation and Zoom Using Accelerometer and Gyroscope Sensors</h1>
+
+**Description:** An experiment that analyzes the use of alternative ways to navigate an image gallery on Android devices using linear and rotational motion. The experiment consists of an android application created in Android studio and database created with Firebase. In order to successfully perform the experiment, a device with an accelerometer and a gyroscope is needed. Also, when the experiment is performed, a continuous connection to the Internet is required.
+
+**Procedure:** After installing the application through its .apk file, user needs to open the application. User will first be prompted with a form where they must enter their username, age, gender, dominant hand and phone they are using to conduct the experiment. User can then open the instructions to both of the tests so they can read them and understand what is asked of them. Inside the instructions there is a button which the user can click to open the test mode for each of the methods so they can get familiar with the application before actually starting the experiment. After that, user can return to the home page and start the first part of the experiment. User will be given a random number which represents the number of the image that must be reached. When the user scrolls through the gallery and reaches that image, a rectangle will be displayed on the image. The user must then zoom in on that rectangle. The task is then completed. The user must perform this task 20 times. After that, the first part of the experiment is over and the user can start the second part of the experiment. In the second part, everything is identical except the modality used to manipulate the gallery. When the second part is completed, the user is done with the application. The user must now fill out a short survey, containing usability and tlx questionnaires. After that, the experiment is completed.
+
+**Requirements:** 
+- Android device, API level 28 or higher
+- Sensors in device: accelerometer, gyroscope
+- Internet access
